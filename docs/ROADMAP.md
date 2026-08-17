@@ -28,8 +28,8 @@ interaction state.
 Completed integration:
 
 - geom, site, joint, tendon, actuator, flex, and skin visual groups
-- shadow, reflection, additive transparency, skybox, fog, haze, wireframe, cull-face, static, skin, flex-face,
-  flex-skin, flex-vertex, and flex-edge render flags
+- shadow, reflection, additive transparency, skybox, fog, haze, wireframe, cull-face, static,
+  skin, flex-face, flex-skin, flex-vertex, flex-edge, and convex-hull render flags
 - joint, center-of-mass, inertia, actuator, activation, rangefinder, and equality overlays
 - slider-crank actuator linkages and broken-crank coloring
 - contact points and forces
@@ -94,6 +94,7 @@ make mujoco-actuators
 make mujoco-slider-crank
 make mujoco-islands
 make mujoco-bvh
+make mujoco-convex-hull
 make mujoco-solver-diagnostics
 make mujoco-rangefinder
 make mujoco-constraints

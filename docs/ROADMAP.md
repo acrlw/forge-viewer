@@ -67,8 +67,10 @@ Remote editing preserves typed light, environment, material, geometry color, and
 
 Next components:
 
-1. Stable add/remove APIs for RPC and authoring tools.
+1. Runtime entity creation over RPC.
 2. Scene serialization for reusable tool layouts and authored content.
+
+`Scene` provides stable add/remove identities for objects, lights, and cameras.
 
 Acceptance starts in `make canvas` and `make lighting`, followed by adapter import and
 write-back coverage.

@@ -33,7 +33,7 @@ contact point/force 三维标注、材质和颜色贴图、天空、
 | camera principal point | physical intrinsics 与非居中投影已支持 | done |
 | image light / 超过 16 盏灯 | image light 近似方向光；只取前 16 盏 | P2 |
 | `mjtLabel` / `mjtFrame` | 有通用 GPU text/debug draw，但尚未把 MuJoCo 的 label/frame 模式接成 UI | P2 |
-| mocap / equality 编辑 | 会参与仿真并正确渲染，但没有 mocap pose 与 equality enable/disable 控件 | P1 |
+| mocap / equality 编辑 | mocap pose 复用 transform gizmo；equality 可在 Control 中动态开关 | done |
 | reflectance 完整语义 | 单主反射面可用；多反射面及 MuJoCo 的 plane/box-face 细则尚未逐项对拍 | P2 |
 | `mjRND_ADDITIVE` | 未实现，Settings 中明确置灰 | P2 |
 | IK | capability 明确为 false | P2，独立于渲染替换 |

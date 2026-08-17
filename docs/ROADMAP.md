@@ -23,11 +23,11 @@ contact point/force 三维标注、材质和颜色贴图、天空、
 |---|---|---|
 | `mjVIS_JOINT/ACTUATOR/ACTIVATION` | joint、site、body、tendon transmission 与 activation 调色已完成；slider-crank 连杆待补 | P2 |
 | light / camera viewport icon | Hierarchy/Inspector 编辑、场景图标与 named camera 视图共用通用 scene entity | done |
-| rangefinder / constraint | 诊断标记未进入通用 debug draw | P1 |
+| rangefinder / constraint | rangefinder 已进入通用 debug draw；constraint 待补 | P1 |
 | inertia / scaled inertia / COM | 已进入通用 debug draw | done |
 | island / contact split / autoconnect | 未实现对应分组与标记 | P2 |
 | flex vert/edge 与 body/mesh BVH / SDF iter | 只画最终 flex/skin/SDF 表面，不画内部调试 overlay | P2 |
-| MuJoCo 的 7 套 visual group | 当前一个 group 开关同时控制 geom/site/flex/skin，tendon/actuator/joint 未独立过滤 | P1 |
+| MuJoCo 的 7 套 visual group | geom/site/joint/tendon/actuator/flex/skin 已独立过滤 | done |
 | 每个 `mjtVisFlag` 的独立开关 | static/flex face/skin 可渲染，但部分还没有独立 flag | P1 |
 | tendon material / texture | 已接入 RGBA 覆盖、材质标量、贴图分桶、repeat 与透明路径 | done |
 | camera principal point | physical intrinsics 与非居中投影已支持 | done |

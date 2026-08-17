@@ -30,6 +30,7 @@ Completed integration:
 - slider-crank actuator linkages and broken-crank coloring
 - contact points and forces
 - split contact-force components and automatic body-to-joint connections
+- constraint-island colors for geoms, flexes, tendons, and contacts
 - named and calibrated cameras, including body attachment
 - editable lights and cameras through Forge scene entities
 - mocap pose and equality controls
@@ -44,7 +45,6 @@ Planned integration:
 
 | Area | Work item | Priority |
 |---|---|---|
-| Solver diagnostics | Island coloring across geoms, flexes, and tendons | P2 |
 | Internal geometry | Body/mesh BVH and SDF iteration overlays | P2 |
 | Lighting | Image-light calibration and light counts above 16 | P2 |
 | Reflections | Multiple reflective surfaces and box-face semantics | P2 |
@@ -88,6 +88,7 @@ make mujoco-visuals
 make mujoco-debug
 make mujoco-actuators
 make mujoco-slider-crank
+make mujoco-islands
 make mujoco-solver-diagnostics
 make mujoco-rangefinder
 make mujoco-constraints

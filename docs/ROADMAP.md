@@ -23,7 +23,7 @@ contact point/force 三维标注、材质和颜色贴图、天空、
 |---|---|---|
 | `mjVIS_JOINT/ACTUATOR/ACTIVATION` | joint、site、body、tendon transmission 与 activation 调色已完成；slider-crank 连杆待补 | P2 |
 | light / camera viewport icon | Hierarchy/Inspector 编辑、场景图标与 named camera 视图共用通用 scene entity | done |
-| rangefinder / constraint | rangefinder 已进入通用 debug draw；constraint 待补 | P1 |
+| rangefinder / constraint | site/camera rays and connect/weld equality endpoints | done |
 | inertia / scaled inertia / COM | 已进入通用 debug draw | done |
 | island / contact split / autoconnect | 未实现对应分组与标记 | P2 |
 | flex vert/edge 与 body/mesh BVH / SDF iter | 只画最终 flex/skin/SDF 表面，不画内部调试 overlay | P2 |

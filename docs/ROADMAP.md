@@ -28,7 +28,7 @@ contact point/force 三维标注、材质和颜色贴图、天空、
 | island / contact split / autoconnect | 未实现对应分组与标记 | P2 |
 | flex vert/edge 与 body/mesh BVH / SDF iter | 只画最终 flex/skin/SDF 表面，不画内部调试 overlay | P2 |
 | MuJoCo 的 7 套 visual group | geom/site/joint/tendon/actuator/flex/skin 已独立过滤 | done |
-| 每个 `mjtVisFlag` 的独立开关 | static/flex face/skin 可渲染，但部分还没有独立 flag | P1 |
+| static / skin / flex face / flex skin flags | independent instance filters with MuJoCo defaults | done |
 | tendon material / texture | 已接入 RGBA 覆盖、材质标量、贴图分桶、repeat 与透明路径 | done |
 | camera principal point | physical intrinsics 与非居中投影已支持 | done |
 | image light / 超过 16 盏灯 | image light 近似方向光；只取前 16 盏 | P2 |

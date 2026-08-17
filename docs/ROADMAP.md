@@ -28,7 +28,7 @@ interaction state.
 Completed integration:
 
 - geom, site, joint, tendon, actuator, flex, and skin visual groups
-- shadow, reflection, skybox, fog, haze, wireframe, cull-face, static, skin, flex-face,
+- shadow, reflection, additive transparency, skybox, fog, haze, wireframe, cull-face, static, skin, flex-face,
   flex-skin, flex-vertex, and flex-edge render flags
 - joint, center-of-mass, inertia, actuator, activation, rangefinder, and equality overlays
 - slider-crank actuator linkages and broken-crank coloring
@@ -53,7 +53,6 @@ Planned integration:
 | Internal geometry | SDF plugin iteration overlays | P2 |
 | Lighting | Image-light calibration and light counts above 16 | P2 |
 | Reflections | Multiple reflective surfaces and box-face semantics | P2 |
-| Compositing | Additive render mode | P2 |
 | Editing | Optional inverse-kinematics component | P3 |
 
 `make mujoco-audit` reports model coverage and adapter write capabilities. Strict mode fails

@@ -20,8 +20,9 @@ The same UI and renderer operate with programmatic scenes, `ToyPhysicsAdapter`, 
 publishers, and snapshot replay.
 
 The editor starts with `make empty` and loads MJCF or URDF models through the File menu or window
-file drop. Runtime loading refreshes adapter structure, scene resources, panels, cameras, and
-interaction state.
+file drop. The macOS window reports drag enter and exit events so the viewport presents the drop
+target before release. Runtime loading refreshes adapter structure, scene resources, panels,
+cameras, and interaction state.
 
 ## MuJoCo coverage
 
@@ -62,17 +63,15 @@ Lights, cameras, and the environment are native Forge entities. `SceneSource` ow
 configuration, `Session` owns user overrides, and `SceneFrame` supplies dynamic world transforms.
 This model serves programmatic scenes, MuJoCo, remote viewers, and replay.
 Remote editing preserves typed light, environment, material, geometry color, and camera commands.
-
-Next components:
-
-1. Runtime entity creation over RPC.
+Live View supports runtime object, light, and camera creation and removal through the same typed
+command path. Stable entity IDs return with each creation result.
 
 `Scene` provides stable add/remove identities for objects, lights, and cameras.
 `.forge.json` stores authored objects, shared materials, meshes, textures, lights, environment
 settings, and cameras.
 
-Acceptance starts in `make canvas`, `make lighting`, and `make image-light`, followed by adapter
-import and write-back coverage.
+Acceptance starts in `make canvas`, `make lighting`, `make image-light`, and
+`make remote-authoring`, followed by adapter import and write-back coverage.
 
 ## MuJoCo parity
 
@@ -111,7 +110,8 @@ Commands use a separate acknowledged channel.
 
 Delivered workflows:
 
-- `make pvd`: one publisher plus effect and debug viewers
+- `make live-view`: one publisher plus effect and debug viewers
+- `make remote-authoring`: create Forge entities through Live View and capture the result
 - `make snapshot-record`: record a live stream
 - `make snapshot-replay`: reproduce a scene after the physics process exits
 

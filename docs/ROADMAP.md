@@ -37,7 +37,7 @@ Completed integration:
 - constraint-island colors for geoms, flexes, tendons, and contacts
 - body, mesh, and flex bounding-volume hierarchy overlays with depth selection and interpolated-flex control cages
 - named and calibrated cameras, including body attachment
-- editable lights and cameras through Forge scene entities
+- editable lights, cameras, and environment settings through Forge scene entities
 - mocap pose and equality controls
 - 1D, 2D, and 3D flex surfaces plus skinned meshes
 - body, joint, geom, site, camera, light, tendon, actuator, constraint, flex, contact, and
@@ -60,16 +60,15 @@ when the active model contains skipped instance data.
 
 ## Forge scene entities
 
-Lights and cameras are native Forge entities. `SceneSource` owns their stable configuration,
-`Session` owns user overrides, and `SceneFrame` supplies dynamic world transforms. This model
-already serves programmatic scenes, MuJoCo, remote viewers, and replay.
+Lights, cameras, and the environment are native Forge entities. `SceneSource` owns their stable
+configuration, `Session` owns user overrides, and `SceneFrame` supplies dynamic world transforms.
+This model serves programmatic scenes, MuJoCo, remote viewers, and replay.
 
 Next components:
 
-1. Environment entity for ambient light, fog, haze, and headlight settings.
-2. Material component with shared-material and per-instance editing.
-3. Stable add/remove APIs for RPC and authoring tools.
-4. Scene serialization for reusable tool layouts and authored content.
+1. Material component with shared-material and per-instance editing.
+2. Stable add/remove APIs for RPC and authoring tools.
+3. Scene serialization for reusable tool layouts and authored content.
 
 Acceptance starts in `make canvas` and `make lighting`, followed by adapter import and
 write-back coverage.

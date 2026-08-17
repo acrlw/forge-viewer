@@ -22,7 +22,7 @@ contact point/force 三维标注、材质和颜色贴图、天空、
 | 缺口 | 当前行为 | 优先级 |
 |---|---|---|
 | `mjVIS_JOINT/ACTUATOR/ACTIVATION` | joint、site、body、tendon transmission 与 activation 调色已完成；slider-crank 连杆待补 | P2 |
-| light / camera viewport icon | 灯可在 Hierarchy/Inspector 编辑，named camera 可使用；场景内图标未画 | P1 |
+| light / camera viewport icon | Hierarchy/Inspector 编辑、场景图标与 named camera 视图共用通用 scene entity | done |
 | rangefinder / constraint | 诊断标记未进入通用 debug draw | P1 |
 | inertia / scaled inertia / COM | 已进入通用 debug draw | done |
 | island / contact split / autoconnect | 未实现对应分组与标记 | P2 |
@@ -53,7 +53,7 @@ contact point/force 三维标注、材质和颜色贴图、天空、
 下一步不是继续给 MuJoCo Inspector 加特例，而是补齐 Forge 自己的组件：
 
 1. environment/headlight 节点：编辑全局 ambient、fog、haze 与 camera headlight；
-2. camera 节点：程序化/自定义后端也能创建、选择和编辑相机，MuJoCo named camera 只是导入源；
+2. ✅ camera 节点：程序化、自定义后端与 MuJoCo 都可创建、选择和编辑相机；
 3. material 组件：在 Forge 层编辑材质，并明确共享材质与实例 override 的语义；
 4. 稳定实体 id 与 add/remove API，使 RPC、快照回放和未来玩具引擎不依赖数组下标。
 
@@ -97,8 +97,8 @@ debug socket 也能渲染同一条 `text` 命令。验收入口：`make text-ove
 5. ✅ 在同一快照协议上补录制/回放，使问题现场不依赖物理进程仍然存活。验收入口：
    `make snapshot-record`、`make snapshot-replay`。
 
-远程模式传输自由相机所需的 scene hint，但暂不逐帧传输挂在运动 body 上的 named camera；
-因此 attach 窗口使用自己的自由相机。本地 MuJoCo viewer 的 named camera 不受影响。
+远程模式传输 scene hint、named camera 元数据与逐帧位姿。attach 窗口可以查看和编辑远端
+camera entity，也可以保留独立的自由相机。
 
 这里不需要 ImGui 多视口，也不要求两个窗口属于同一进程。真正要共享的是带序号的场景状态，
 不是 UI 布局和 OpenGL context。

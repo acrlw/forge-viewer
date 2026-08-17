@@ -52,7 +52,6 @@ Planned integration:
 | Area | Work item | Priority |
 |---|---|---|
 | Lighting | Image-light calibration | P2 |
-| Reflections | Box-face reflection semantics | P2 |
 | Editing | Optional inverse-kinematics component | P3 |
 
 `make mujoco-audit` reports model coverage and adapter write capabilities. Strict mode fails

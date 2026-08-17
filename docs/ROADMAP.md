@@ -37,7 +37,7 @@ Completed integration:
 - constraint-island colors for geoms, flexes, tendons, and contacts
 - body, mesh, and flex bounding-volume hierarchy overlays with depth selection and interpolated-flex control cages
 - named and calibrated cameras, including body attachment
-- editable lights, cameras, and environment settings through Forge scene entities
+- editable analytic and image lights, cameras, and environment settings through Forge scene entities
 - mocap pose and equality controls
 - 1D, 2D, and 3D flex surfaces plus skinned meshes
 - body, joint, geom, site, camera, light, tendon, actuator, constraint, flex, contact, and
@@ -51,7 +51,6 @@ Planned integration:
 
 | Area | Work item | Priority |
 |---|---|---|
-| Lighting | Image-light calibration | P2 |
 | Editing | Optional inverse-kinematics component | P3 |
 
 `make mujoco-audit` reports model coverage and adapter write capabilities. Strict mode fails
@@ -72,8 +71,8 @@ Next components:
 `.forge.json` stores authored objects, shared materials, meshes, textures, lights, environment
 settings, and cameras.
 
-Acceptance starts in `make canvas` and `make lighting`, followed by adapter import and
-write-back coverage.
+Acceptance starts in `make canvas`, `make lighting`, and `make image-light`, followed by adapter
+import and write-back coverage.
 
 ## MuJoCo parity
 
@@ -137,7 +136,7 @@ specular, shininess, emission, and reflectance data through OpenGL 4.1.
 
 A second rendering backend becomes valuable with concrete demand for compute workloads,
 GPU-driven submission, broader Apple platform support, or glTF metallic-roughness materials
-with normal maps, HDR lighting, and image-based lighting.
+with normal maps and HDR environment processing.
 
 The backend prototype should implement opaque rendering, ID picking, outlines, and capture
 behind the current `RenderBackend` and scene contracts. wgpu offers a practical first target.

@@ -31,6 +31,7 @@ Completed integration:
 - contact points and forces
 - split contact-force components and automatic body-to-joint connections
 - constraint-island colors for geoms, flexes, tendons, and contacts
+- body, mesh, and flex bounding-volume hierarchy overlays with depth selection
 - named and calibrated cameras, including body attachment
 - editable lights and cameras through Forge scene entities
 - mocap pose and equality controls
@@ -45,7 +46,7 @@ Planned integration:
 
 | Area | Work item | Priority |
 |---|---|---|
-| Internal geometry | Body/mesh BVH and SDF iteration overlays | P2 |
+| Internal geometry | SDF iteration overlays and interpolated-flex control cages | P2 |
 | Lighting | Image-light calibration and light counts above 16 | P2 |
 | Reflections | Multiple reflective surfaces and box-face semantics | P2 |
 | Compositing | Additive render mode | P2 |
@@ -89,6 +90,7 @@ make mujoco-debug
 make mujoco-actuators
 make mujoco-slider-crank
 make mujoco-islands
+make mujoco-bvh
 make mujoco-solver-diagnostics
 make mujoco-rangefinder
 make mujoco-constraints

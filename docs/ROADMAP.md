@@ -19,6 +19,10 @@ reflections, capture, video, keyframes, perturbation, and paused pose editing.
 The same UI and renderer operate with programmatic scenes, `ToyPhysicsAdapter`, remote
 publishers, and snapshot replay.
 
+The editor starts with `make empty` and loads MJCF or URDF models through the File menu or window
+file drop. Runtime loading refreshes adapter structure, scene resources, panels, cameras, and
+interaction state.
+
 ## MuJoCo coverage
 
 Completed integration:

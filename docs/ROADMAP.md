@@ -31,7 +31,7 @@ Completed integration:
 - contact points and forces
 - split contact-force components and automatic body-to-joint connections
 - constraint-island colors for geoms, flexes, tendons, and contacts
-- body, mesh, and flex bounding-volume hierarchy overlays with depth selection
+- body, mesh, and flex bounding-volume hierarchy overlays with depth selection and interpolated-flex control cages
 - named and calibrated cameras, including body attachment
 - editable lights and cameras through Forge scene entities
 - mocap pose and equality controls
@@ -46,7 +46,7 @@ Planned integration:
 
 | Area | Work item | Priority |
 |---|---|---|
-| Internal geometry | SDF iteration overlays and interpolated-flex control cages | P2 |
+| Internal geometry | SDF plugin iteration overlays | P2 |
 | Lighting | Image-light calibration and light counts above 16 | P2 |
 | Reflections | Multiple reflective surfaces and box-face semantics | P2 |
 | Compositing | Additive render mode | P2 |

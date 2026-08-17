@@ -66,9 +66,8 @@ This model serves programmatic scenes, MuJoCo, remote viewers, and replay.
 
 Next components:
 
-1. Material component with shared-material and per-instance editing.
-2. Stable add/remove APIs for RPC and authoring tools.
-3. Scene serialization for reusable tool layouts and authored content.
+1. Stable add/remove APIs for RPC and authoring tools.
+2. Scene serialization for reusable tool layouts and authored content.
 
 Acceptance starts in `make canvas` and `make lighting`, followed by adapter import and
 write-back coverage.

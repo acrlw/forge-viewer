@@ -24,14 +24,17 @@ publishers, and snapshot replay.
 Completed integration:
 
 - geom, site, joint, tendon, actuator, flex, and skin visual groups
-- shadow, reflection, skybox, fog, haze, wireframe, cull-face, static, skin, flex-face, and
-  flex-skin render flags
+- shadow, reflection, skybox, fog, haze, wireframe, cull-face, static, skin, flex-face,
+  flex-skin, flex-vertex, and flex-edge render flags
 - joint, center-of-mass, inertia, actuator, activation, rangefinder, and equality overlays
 - contact points and forces
 - named and calibrated cameras, including body attachment
 - editable lights and cameras through Forge scene entities
 - mocap pose and equality controls
 - 1D, 2D, and 3D flex surfaces plus skinned meshes
+- body, joint, geom, site, camera, light, tendon, actuator, constraint, flex, contact, and
+  selection labels
+- world, body, geom, site, camera, light, and contact coordinate frames
 - tendon material, color, transparency, texture, and repeat behavior
 - keyframe loading and 60 fps video export
 
@@ -41,9 +44,8 @@ Planned integration:
 |---|---|---|
 | Actuators | Slider-crank linkage overlay | P2 |
 | Solver diagnostics | Island, contact split, and autoconnect markers | P2 |
-| Internal geometry | Flex vertices and edges, BVH, and SDF iteration overlays | P2 |
+| Internal geometry | Body/mesh BVH and SDF iteration overlays | P2 |
 | Lighting | Image-light calibration and light counts above 16 | P2 |
-| Labels and frames | MuJoCo label and frame modes in Settings | P2 |
 | Reflections | Multiple reflective surfaces and box-face semantics | P2 |
 | Compositing | Additive render mode | P2 |
 | Editing | Optional inverse-kinematics component | P3 |
@@ -86,6 +88,7 @@ make mujoco-debug
 make mujoco-actuators
 make mujoco-rangefinder
 make mujoco-constraints
+make mujoco-overlays
 make deformables
 make musculoskeletal-check
 ```

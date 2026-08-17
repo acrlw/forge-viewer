@@ -63,6 +63,7 @@ when the active model contains skipped instance data.
 Lights, cameras, and the environment are native Forge entities. `SceneSource` owns their stable
 configuration, `Session` owns user overrides, and `SceneFrame` supplies dynamic world transforms.
 This model serves programmatic scenes, MuJoCo, remote viewers, and replay.
+Remote editing preserves typed light, environment, material, geometry color, and camera commands.
 
 Next components:
 

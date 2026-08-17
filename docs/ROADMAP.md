@@ -21,15 +21,16 @@ contact point/force 三维标注、材质和颜色贴图、天空、
 
 | 缺口 | 当前行为 | 优先级 |
 |---|---|---|
-| `mjVIS_JOINT/ACTUATOR/ACTIVATION` | 有 Joint/Ctrl 数值 UI，但不画 MuJoCo 的三维图标 | P1 |
+| `mjVIS_JOINT/ACTUATOR/ACTIVATION` | joint、site、body、tendon transmission 与 activation 调色已完成；slider-crank 连杆待补 | P2 |
 | light / camera viewport icon | 灯可在 Hierarchy/Inspector 编辑，named camera 可使用；场景内图标未画 | P1 |
-| rangefinder / constraint / inertia / COM | 诊断标记未进入通用 debug draw | P1 |
+| rangefinder / constraint | 诊断标记未进入通用 debug draw | P1 |
+| inertia / scaled inertia / COM | 已进入通用 debug draw | done |
 | island / contact split / autoconnect | 未实现对应分组与标记 | P2 |
 | flex vert/edge 与 body/mesh BVH / SDF iter | 只画最终 flex/skin/SDF 表面，不画内部调试 overlay | P2 |
 | MuJoCo 的 7 套 visual group | 当前一个 group 开关同时控制 geom/site/flex/skin，tendon/actuator/joint 未独立过滤 | P1 |
 | 每个 `mjtVisFlag` 的独立开关 | static/flex face/skin 可渲染，但部分还没有独立 flag | P1 |
 | tendon material / texture | 已接入 RGBA 覆盖、材质标量、贴图分桶、repeat 与透明路径 | done |
-| camera principal point | 非居中投影退化为居中投影 | P1 |
+| camera principal point | physical intrinsics 与非居中投影已支持 | done |
 | image light / 超过 16 盏灯 | image light 近似方向光；只取前 16 盏 | P2 |
 | `mjtLabel` / `mjtFrame` | 有通用 GPU text/debug draw，但尚未把 MuJoCo 的 label/frame 模式接成 UI | P2 |
 | mocap / equality 编辑 | 会参与仿真并正确渲染，但没有 mocap pose 与 equality enable/disable 控件 | P1 |
@@ -77,8 +78,8 @@ debug socket 也能渲染同一条 `text` 命令。验收入口：`make text-ove
 4. ✅ flex/skin 使用“静态拓扑 + 逐帧顶点/法线”的通用动态网格契约；1D flex 是按模型
    半径生成的圆管，2D/3D flex 与 skin 逐值对拍 MuJoCo `mjvScene`，静态 mesh 快路径不变。
    验收入口：`make deformables`。
-5. ⏳ 上表的诊断 overlay 将按调试价值逐类进入通用 debug draw，而不把 MuJoCo 类型泄漏给
-   forge pass。
+5. ✅ joint、COM、inertia、scaled inertia 与 joint/site/body/tendon actuator overlay 已进入
+   通用 debug draw。剩余 overlay 按上表继续推进。
 
 完成标准：审计命令对内置覆盖场景不再报告非预期跳过项；每类能力都有一份正例、一份反例
 和一个可交互 `make` 场景。

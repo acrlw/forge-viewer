@@ -45,13 +45,13 @@ Completed integration:
 - world, body, geom, site, camera, light, and contact coordinate frames
 - tendon material, color, transparency, texture, and repeat behavior
 - keyframe loading and 60 fps video export
+- up to 100 active scene lights, matching MuJoCo's `mjMAXLIGHT`
 
 Planned integration:
 
 | Area | Work item | Priority |
 |---|---|---|
-| Internal geometry | SDF plugin iteration overlays | P2 |
-| Lighting | Image-light calibration and light counts above 16 | P2 |
+| Lighting | Image-light calibration | P2 |
 | Reflections | Multiple reflective surfaces and box-face semantics | P2 |
 | Editing | Optional inverse-kinematics component | P3 |
 

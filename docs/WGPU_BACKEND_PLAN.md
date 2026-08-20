@@ -5,7 +5,8 @@ render flag, debug view, label/frame/bvh overlay, debug draw, gizmo, shadows, pl
 reflections, skybox/IBL, tendons, and the interactive viewer window — with pixel parity
 against the OpenGL (forge) backend and zero regression on the default path.
 
-Status: living document on the `wgpu-py` branch. Milestones land as separate commits.
+Status: complete on the `wgpu-py` branch — M1–M10 landed as separate commits; the
+verification matrix in M10 is the acceptance gate for the series.
 
 ## Principles
 
@@ -39,7 +40,7 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
 
 ## Milestones
 
-### M1 — Backend-parameterized test infrastructure
+### M1 — Backend-parameterized test infrastructure — done (42847a1)
 - `tests/gpu/conftest.py`: `make_backend(...)` factory honoring `FORGE_VIEWER_BACKEND`;
   `backend_name` fixture; GL-internals test files (test_forge_core, test_id_outline,
   test_debugdraw_gpu, and the GL-specific parts of test_pipeline) get an explicit
@@ -51,7 +52,7 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
 - Acceptance: `make gpu-wgpu` runs, wgpu-unsupported cases skip on caps; `make gpu`
   output identical to before.
 
-### M2 — Cubemaps: skybox, IBL image light, horizon haze
+### M2 — Cubemaps: skybox, IBL image light, horizon haze — done (e490784)
 - `textures.py`: cubemap store (6-face upload, CPU-generated mip chain — WebGPU has no
   auto-mipmap; IBL roughness LOD depends on it), `black_cube` fallback.
 - `passes/skybox.py` + `shaders/skybox.wgsl`: fullscreen triangle, inverse view-proj
@@ -62,7 +63,7 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
 - Acceptance: `test_horizon_haze.py` and the skybox/image-light cases of
   `test_shading.py` pass under wgpu.
 
-### M3 — Shadows (largest single shader port)
+### M3 — Shadows (largest single shader port) — done (f95f5ee)
 - `cascades.py` port with WebGPU z∈[0,1] ortho (4096² atlas, 3 tiles, texel snap).
 - `passes/shadow.py` + `shadow.wgsl` (depth-only), `spot_dist.wgsl` (R16Float distance,
   MIN blend, 2D-array layers — per-layer views are native in WebGPU, simpler than GL's
@@ -73,7 +74,7 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
 - Flags: SHADOW; cast_shadow semantics; transparent does not cast.
 - Acceptance: `test_shadows.py` (14) under wgpu.
 
-### M4 — Planar reflections
+### M4 — Planar reflections — done (bb3b25d)
 - `passes/reflect.py`: plane detection/dedup (max 4), mirrored view matrix, front-face
   flip pipeline variant, clip-plane discard in the scene fragment, negative-reflectance
   channel encoding (layer/top-face), RGBA16F targets + shared depth, transparent
@@ -81,7 +82,7 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
 - Flags: REFLECTION.
 - Acceptance: `test_reflection.py` (9) under wgpu.
 
-### M5 — Debug views, selection outline, present modes
+### M5 — Debug views, selection outline, present modes — done (24ab3ad)
 - WIREFRAME: lazy barycentric vertex buffer in `MeshStore` + pipeline constant variant
   (no geometry shader).
 - OVERDRAW: additive, no-depth pipeline variant. ALBEDO/NORMAL/DEPTH already exist.
@@ -93,14 +94,14 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
   behavior tests (mask continuity under occlusion, one outline per link, viewport-edge
   behavior) run under both backends.
 
-### M6 — Tendons
+### M6 — Tendons — done (111c440)
 - `passes/tendon.py`: `_publish_tendons` packing, capsule shaft/cap instances (3 per
   segment) from the shared built-in meshes, own `InstanceStore`, material/transparent
   buckets with back-to-front order. Reuses the scene pipeline wholesale.
 - Flags: TENDON.
 - Acceptance: tendon cases of `test_pipeline.py` under wgpu.
 
-### M7 — Debug draw + text + overlays (largest CPU+GPU chunk)
+### M7 — Debug draw + text + overlays (largest CPU+GPU chunk) — done (ce270bd)
 - Extract shared `DebugDraw` publisher out of `ForgeBackend` (labels, frames, bvh,
   contacts, joints, COM, inertia, actuators, rangefinder, constraint, flex).
 - `passes/debug.py` + the six WGSL families (`debug_line/point/solid/sector/stroke/
@@ -114,14 +115,14 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
   line width, glyph quads, 10k-line frame) + label/frame/bvh cases of `test_pipeline.py`
   under wgpu.
 
-### M8 — Gizmo
+### M8 — Gizmo — done (1364aeb)
 - `passes/gizmo.py` + `gizmo.wgsl`: 7 built-in handle meshes, screen-constant scale
   (`px_scale·clip.w`), depth pinned to the near plane (WebGPU z≈0), `u_mask_radius`
   center hole; `set_gizmo` stores and `caps.gizmo=True`.
 - Acceptance: backend-neutral gizmo render tests (handle visible, screen-size
   invariance, mask hole); existing CPU hit-tests unchanged.
 
-### M9 — Interactive viewer surface path (most integration risk)
+### M9 — Interactive viewer surface path (most integration risk) — done (808eb50)
 - `ui/window.py`: backend mode. Under wgpu the window is a GLFW window with
   `GLFW_CLIENT_API=GLFW_NO_API` surfaced through rendercanvas; imgui renders via
   `wgpu.utils.imgui.ImguiRenderer`. The known imgui-bundle 1.92 incompatibility
@@ -136,12 +137,20 @@ Status: living document on the `wgpu-py` branch. Milestones land as separate com
   tests that are backend-neutral (open, read_frame, edit→pixels) pass under wgpu;
   `make doctor` reports the wgpu path accurately.
 
-### M10 — Finalization
+### M10 — Finalization — done
 - MSAA flag semantics aligned with forge (samples fixed at construction — verify forge
   behavior first, then match).
 - `id_msaa`/caps/notes sweep; README + `docs/RENDERER.md` + `docs/ROADMAP.md` updates.
 - Full verification matrix: default suite, per-file GPU loop on both backends,
   `renderer-api` + `renderer-api-wgpu`, gallery vs `mujoco.Renderer` on both backends.
+
+Outcome: forge fixes MSAA sample counts at construction (`RenderTarget` created once,
+`resize`/`capture` preserve it; `RenderFlag.MSAA` only toggles per-pass GL multisample
+rasterization), so the wgpu backend keeps the same construction-time semantics and reports
+the pipeline-state delta via `capabilities().notes`. The caps sweep (both backends dumped
+side by side) found only honest technical differences: `id_msaa=False` (single-sampled
+export MRT), `pass_timing`/`gpu_timing=False` (no timestamp feature, frame CPU timing only),
+and `gl_version`/`renderer` reporting the wgpu-py version and adapter.
 
 ## Explicitly out of scope (recorded in caps notes)
 

@@ -12,7 +12,8 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 ## 当前状态
 
-2026-08-18，P0 和 P1 已完成。SDF iteration visualization 排入 P3。
+2026-08-21，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
+[STATUS.md](STATUS.md)。SDF iteration visualization 排入 P3。
 
 | 范围 | 状态 | 验收结果 |
 |---|---|---|
@@ -23,18 +24,20 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | P1 CLI 与 RPC | 完成 | typed commands、本机 AF_UNIX 服务、版本、超时、错误和三种捕获模式通过 |
 | P1 渲染正确性 | 完成 | `texuniform`、透明排序、100 灯光和 8 个本地阴影槽位通过 |
 | P1 图像门槛 | 完成 | parity、golden、material parity 和完整 GPU 回归通过 |
+| wgpu 渲染后端 | 完成 | macOS Metal、Linux Vulkan、Renderer API 和交互式 Viewer 通过 |
 | P2 生产化 | 待开始 | 真实第二物理后端、跨平台 CI、安装发布与规模稳定性 |
 
 ## 验收基线
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | `make check`：494 passed，281 deselected |
-| GPU 回归 | `make gpu`：173 passed |
-| MuJoCo physics | 183 passed，592 deselected |
-| Renderer API | 6 个 CPU 合约、9 个真实 GPU 测试、200 次构造销毁 |
-| Renderer RGB | 对 MuJoCo 参考图 MAE 1.4271 |
-| Renderer depth | 误差 p95 0.01617 m |
+| 核心质量 | `make check`：512 passed，320 deselected |
+| Forge GPU 回归 | `make gpu`：202 passed |
+| wgpu GPU 回归 | `make gpu-wgpu`：159 passed，7 skipped |
+| MuJoCo physics | 185 passed，647 deselected |
+| Renderer API | 每个后端 6 个 CPU 合约、10 个真实 GPU 测试、200 次构造销毁 |
+| Renderer RGB | 对 MuJoCo 参考图 MAE 1.4295 |
+| Renderer depth | 误差 p95 0.00037 m |
 | Renderer segmentation | 像素一致率 0.999938 |
 | MuJoCo parity | 5 个视角平均 edge IoU 0.247，平均 luma error 17.7，28/29 检查通过 |
 | Golden images | 6/6 通过 |
@@ -198,6 +201,7 @@ P2 按以下顺序执行：
 
 - macOS、Linux 和 Windows CPU CI
 - OpenGL 3.3 与 macOS OpenGL 4.1 验证
+- Windows D3D12 的 wgpu 安装、交互窗口和视觉回归
 - 支持平台的 GPU smoke capture
 - wheel 构建、clean environment 安装和启动验证
 - 平台性能基线与兼容矩阵
@@ -234,9 +238,6 @@ P2 按以下顺序执行：
 
 ### 图形管线研究
 
-- wgpu 渲染后端（已集成：支持 macOS Metal 与 Linux Vulkan，验收见
-  `make gpu-wgpu`、`make renderer-api-wgpu` 与 `docs/WGPU_BACKEND_REPORT.md`）
-- Windows D3D12 安装、交互窗口和视觉回归验证
 - metallic-roughness、normal map、HDR environment 和 image-based lighting
 - 基于性能数据评估原生 renderer core
 
@@ -256,6 +257,7 @@ P2 按以下顺序执行：
 | P1 完整门槛 | `make p1` |
 | 核心质量 | `make check`、`make reverse` |
 | Renderer | `make renderer-api` |
+| wgpu Renderer | `make renderer-api-wgpu`、`make gpu-wgpu` |
 | MuJoCo 语义 | `make mujoco-audit`、`make adapter-conformance ADAPTER=mujoco CONFORMANCE_ASSET=deformables` |
 | IK | `make mujoco-ik` |
 | 相机与快照 | `make camera-state`、`make scene-snapshot` |

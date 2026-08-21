@@ -126,7 +126,7 @@ diagnostic overlays, and tooling. Current validation is summarized in
 ### M10 — Finalization — done
 - MSAA flag semantics aligned with forge (samples fixed at construction — verify forge
   behavior first, then match).
-- `id_msaa`/caps/notes sweep; README + `docs/RENDERER.md` + `docs/ROADMAP.md` updates.
+- `id_msaa`/caps/notes sweep; README, `docs/RENDERER.md`, and `plan/ROADMAP.md` updates.
 - Full verification matrix: default suite, per-file GPU loop on both backends,
   `renderer-api` + `renderer-api-wgpu`, gallery vs `mujoco.Renderer` on both backends.
 

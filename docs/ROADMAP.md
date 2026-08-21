@@ -234,8 +234,9 @@ P2 按以下顺序执行：
 
 ### 图形管线研究
 
-- wgpu 渲染后端原型（已完成：`FORGE_VIEWER_BACKEND=wgpu` 启用全量渲染能力，验收见
-  `make gpu-wgpu` / `make renderer-api-wgpu` 与 docs/WGPU_BACKEND_PLAN.md）
+- wgpu 渲染后端（已集成：支持 macOS Metal 与 Linux Vulkan，验收见
+  `make gpu-wgpu`、`make renderer-api-wgpu` 与 `docs/WGPU_BACKEND_REPORT.md`）
+- Windows D3D12 安装、交互窗口和视觉回归验证
 - metallic-roughness、normal map、HDR environment 和 image-based lighting
 - 基于性能数据评估原生 renderer core
 

@@ -1,29 +1,19 @@
 # wgpu Backend Completion Plan
 
-Goal: `FORGE_VIEWER_BACKEND=wgpu` supports the full forge-viewer capability set — every
-render flag, debug view, label/frame/bvh overlay, debug draw, gizmo, shadows, planar
-reflections, skybox/IBL, tendons, and the interactive viewer window — with pixel parity
-against the OpenGL (forge) backend and zero regression on the default path.
-
-Status: complete on the `wgpu-py` branch — M1–M10 landed as separate commits; the
-verification matrix in M10 is the acceptance gate for the series.
+This document records the implementation milestones for the wgpu backend. The backend is
+integrated and supports the public Renderer API, the interactive viewer, render passes,
+diagnostic overlays, and tooling. Current validation is summarized in
+`docs/WGPU_BACKEND_REPORT.md`.
 
 ## Principles
 
-1. **Mirror, don't invent.** `render/webgpu/` mirrors `render/forge/` structure: a
+1. **Parallel pass structure.** `render/webgpu/` mirrors `render/forge/` structure: a
    `passes/` package (one module per pass, same names), `shaders/*.wgsl` mirroring the
    GLSL files, the same store class conventions (`sync/get/release`), the same
-   PASS_ORDER. Where forge has GL-only infrastructure (`state_guard.py`, `gl_native.py`,
-   shader hot reload, GL timer queries) the wgpu backend simply does without and reports
-   it via `capabilities().notes`.
-2. **Reuse the backend-agnostic layers unchanged.** `render/scene.py`, `builder.py`,
-   `debugdraw.py`, `mesh.py`, top-level `gizmo.py`, `picking.py` are already shared.
-   Two extractions are needed to avoid duplication:
-   - `render/forge/text.py`: split the PIL glyph-atlas building (backend-agnostic) from
-     the GL draw; both backends consume the atlas.
-   - `ForgeBackend._publish_*` (labels/frames/bvh/contacts/joints/…, ~350 lines of pure
-     CPU work writing into the `DebugDraw` store): extract into a shared publisher used
-     by both backends.
+   PASS_ORDER. Backend-specific limits are exposed through `BackendCaps.notes`.
+2. **Shared renderer contracts.** `render/scene.py`, `builder.py`, `debugdraw.py`,
+   `mesh.py`, `text.py`, `overlay.py`, top-level `gizmo.py`, and `picking.py` are shared.
+   Both backends consume the same glyph atlas and debug-overlay publishers.
 3. **WGSL idioms for GL idioms.** WGSL has no preprocessor: `DEBUG_VIEW` / `WIREFRAME` /
    `USE_SHADOW` variants use pipeline-creation `constants` (WGSL `override`). No
    geometry shader: wireframe barycentrics come from a lazily-built vertex attribute.
@@ -31,12 +21,10 @@ verification matrix in M10 is the acceptance gate for the series.
    in the frame uniforms. No MSAA resolve for uint/depth: the existing single-sample
    export MRT pass remains the readback path. `gl_VertexID` → `@builtin(vertex_index)`,
    `flat`/`noperspective` → `@interpolate(flat/linear)` — both used by debug draw.
-4. **Caps honesty.** Every milestone flips `BackendCaps`/`_SUPPORTED_FLAGS` only for
-   what actually works and is covered by a test under `FORGE_VIEWER_BACKEND=wgpu`.
-5. **Verification per milestone.** (a) the milestone's tests pass under wgpu;
-   (b) `pytest -q` (495) and the per-file `make gpu` loop show the exact same results
-   as on `main` (pre-existing failures: forge_core 2, id_outline 3, pipeline 1,
-   model_loading 2 errors, ui_interaction 1+39 — do not chase); (c) `ruff check` clean.
+4. **Capability reporting.** `BackendCaps` and `_SUPPORTED_FLAGS` reflect implemented,
+   tested behavior.
+5. **Milestone verification.** Each milestone includes focused WGPU tests, the default
+   CPU suite, Forge GPU regressions, formatting, and lint checks.
 
 ## Milestones
 
@@ -123,16 +111,14 @@ verification matrix in M10 is the acceptance gate for the series.
   invariance, mask hole); existing CPU hit-tests unchanged.
 
 ### M9 — Interactive viewer surface path (most integration risk) — done (808eb50)
-- `ui/window.py`: backend mode. Under wgpu the window is a GLFW window with
-  `GLFW_CLIENT_API=GLFW_NO_API` surfaced through rendercanvas; imgui renders via
-  `wgpu.utils.imgui.ImguiRenderer`. The known imgui-bundle 1.92 incompatibility
-  (`cmd_lists_count`) is fixed by a small vendored subclass in-repo — never by patching
-  site-packages — with a version guard.
+- `ui/window_wgpu.py`: GLFW creates a `GLFW_CLIENT_API=GLFW_NO_API` window and
+  rendercanvas supplies the native surface description; imgui renders through
+  `wgpu.utils.imgui.ImguiWgpuBackend`. The known imgui-bundle 1.92 incompatibility
+  (`cmd_lists_count`) is handled by a version-guarded subclass in the project.
 - `ViewportImage`: carries a backend payload; `_draw_viewport` binds the wgpu texture
   through the imgui renderer instead of `ImTextureRef(gl_id)`.
 - `composition._compose`: honor `FORGE_VIEWER_BACKEND`; `doctor`/`backends` reporting.
-- HiDPI: pixel-ratio handling must match the GL path (scale math already centralized in
-  `Window`).
+- HiDPI: the GL and wgpu windows share point-to-pixel conversion and explicit UI scaling.
 - Acceptance: `FORGE_VIEWER_BACKEND=wgpu make viewer` opens the full UI; window-stack
   tests that are backend-neutral (open, read_frame, edit→pixels) pass under wgpu;
   `make doctor` reports the wgpu path accurately.

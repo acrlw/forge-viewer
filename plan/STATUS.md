@@ -1,12 +1,20 @@
 # 未完成项统计
 
-更新日期：2026-08-21
+更新日期：2026-08-22
 
 P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。按
-[ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 34 项：P2 生产化 16 项、wgpu
-上游与运行时改进 5 项、P3 延后能力 13 项。
+[ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 33 项：P2 编辑器与生产化 19 项、
+wgpu 上游与运行时改进 5 项、P3 延后能力 9 项。
 
-## P2：生产化，16 项
+## P2：编辑器与生产化，19 项
+
+### 编辑器交互，3 项
+
+场景文件、Entity 生命周期、undo/redo、authored overlay 和运行时 MJCF/URDF 组合已经完成。
+
+1. 完善 Forge 资源目录、相对路径、缺失资源诊断和资源重定位。
+2. 保存包含 MJCF、URDF 与 Forge entity 引用的组合文档。
+3. 编辑组合模型根 transform 并恢复文档状态。
 
 ### 真实第二物理后端，5 项
 
@@ -46,21 +54,20 @@ ToyPhysics 用于协议与 UI 验证。Newton 已进入后端矩阵，物理适�
 这些项目属于后端能力增强。当前 Metal/Vulkan 的 Renderer API、Viewer、render flags、
 debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通过回归测试。
 
-## P3：延后能力，13 项
+## P3：延后能力，9 项
 
 - SDF iteration visualization：3 项
 - Live View 增强：4 项
-- Forge 编辑器深化：4 项
 - PBR 与原生 renderer core 评估：2 项
 
 ## 当前验证基线
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | 512 passed，320 deselected |
-| MuJoCo physics | 185 passed，647 deselected |
-| Forge GPU | 202 passed |
-| wgpu GPU | 159 passed，7 skipped |
+| CPU 与静态检查 | 528 passed，326 deselected |
+| MuJoCo physics | 186 passed，658 deselected |
+| Forge GPU | 207 passed |
+| wgpu GPU | 164 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约、10 个 GPU 测试 |
 | 源码任务标记 | 0 个 TODO、FIXME 或 HACK |
 

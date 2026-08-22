@@ -12,7 +12,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 ## 当前状态
 
-2026-08-21，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
+2026-08-22，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
 [STATUS.md](STATUS.md)。SDF iteration visualization 排入 P3。
 
 | 范围 | 状态 | 验收结果 |
@@ -25,16 +25,16 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | P1 渲染正确性 | 完成 | `texuniform`、透明排序、100 灯光和 8 个本地阴影槽位通过 |
 | P1 图像门槛 | 完成 | parity、golden、material parity 和完整 GPU 回归通过 |
 | wgpu 渲染后端 | 完成 | macOS Metal、Linux Vulkan、Renderer API 和交互式 Viewer 通过 |
-| P2 生产化 | 待开始 | 真实第二物理后端、跨平台 CI、安装发布与规模稳定性 |
+| P2 编辑器与生产化 | 进行中 | 编辑历史、运行时多模型组合完成；组合文档、第二物理后端、发布和规模稳定性待完成 |
 
 ## 验收基线
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | `make check`：512 passed，320 deselected |
-| Forge GPU 回归 | `make gpu`：202 passed |
-| wgpu GPU 回归 | `make gpu-wgpu`：159 passed，7 skipped |
-| MuJoCo physics | 185 passed，647 deselected |
+| 核心质量 | `make check`：528 passed，326 deselected |
+| Forge GPU 回归 | `make gpu`：207 passed |
+| wgpu GPU 回归 | `make gpu-wgpu`：164 passed，7 skipped |
+| MuJoCo physics | 186 passed，658 deselected |
 | Renderer API | 每个后端 6 个 CPU 合约、10 个真实 GPU 测试、200 次构造销毁 |
 | Renderer RGB | 对 MuJoCo 参考图 MAE 1.4295 |
 | Renderer depth | 误差 p95 0.00037 m |
@@ -189,7 +189,37 @@ make gpu
 
 P2 按以下顺序执行：
 
-### P2.1 真实第二物理后端
+### P2.1 编辑器交互
+
+已完成：
+
+- `.forge.json` 的 New、Open、Save、Save As、文件拖放和未保存提示
+- primitive、light 与 camera 的创建、复制、重命名和删除
+- Entity 菜单、Hierarchy 上下文菜单与快捷键
+- 通用 undo/redo、连续 Gizmo 与 Inspector 编辑事务、保存点脏状态
+- authored overlay 在 scene source 重建后继续生效
+- 后端中立的模型组合契约
+- MuJoCo `MjSpec` 运行时 MJCF/URDF 添加、移除、命名空间和状态迁移
+- File 菜单、多文件拖放、Hierarchy 模型分组和移除入口
+- OpenGL 与 wgpu 的静态编辑回归
+
+后续工作：
+
+- Forge 资源目录、相对路径、缺失资源诊断和资源重定位
+- 保存包含 MJCF、URDF 与 Forge entity 引用的组合文档
+- 组合模型根 transform 编辑与文档恢复
+
+验收入口：
+
+```bash
+make editor
+make editor-files
+make entity-edit
+make undo-redo
+make model-composition
+```
+
+### P2.2 真实第二物理后端
 
 - 选择维护活跃且具有稳定 Python binding 的物理引擎
 - 发布稳定 scene source 和动态 scene frame
@@ -197,7 +227,7 @@ P2 按以下顺序执行：
 - 接入 contact 与 debug draw
 - 通过 adapter conformance 和独立可视化场景
 
-### P2.2 平台与发布
+### P2.3 平台与发布
 
 - macOS、Linux 和 Windows CPU CI
 - OpenGL 3.3 与 macOS OpenGL 4.1 验证
@@ -206,7 +236,7 @@ P2 按以下顺序执行：
 - wheel 构建、clean environment 安装和启动验证
 - 平台性能基线与兼容矩阵
 
-### P2.3 稳定性与规模
+### P2.4 稳定性与规模
 
 - 长时间仿真和 Viewer 内存稳定性
 - 大模型加载、切换和重复销毁
@@ -229,13 +259,6 @@ P2 按以下顺序执行：
 - 协议与录制格式版本
 - 更多网络 transport
 
-### Forge 编辑器深化
-
-- UI 创建、复制和删除 primitive、light 与 camera
-- `.forge.json` 场景组合和资源管理
-- MJCF、URDF 与 Forge entity 多模型组合
-- 通用 undo/redo
-
 ### 图形管线研究
 
 - metallic-roughness、normal map、HDR environment 和 image-based lighting
@@ -244,6 +267,7 @@ P2 按以下顺序执行：
 ## v1 完成条件
 
 - P0 与 P1 验收保持通过
+- 编辑器文件、Entity 生命周期、undo/redo 和多模型组合通过
 - 真实第二物理后端通过能力协议
 - macOS、Linux 和 Windows 完成安装与启动验证
 - 支持平台建立性能预算和 GPU smoke capture

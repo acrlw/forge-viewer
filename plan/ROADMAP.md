@@ -12,7 +12,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 ## 当前状态
 
-2026-08-24，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
+2026-08-25，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
 [STATUS.md](STATUS.md)。SDF iteration visualization 排入 P3。
 
 | 范围 | 状态 | 验收结果 |
@@ -31,9 +31,9 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | `make check`：575 passed，334 deselected |
-| Forge GPU 回归 | 上次完整基线 209 passed；当前主机受 EGL 0x3001 和 shared-MSAA picking 限制 |
-| wgpu GPU 回归 | `make gpu-wgpu`：172 passed，7 skipped |
+| 核心质量 | `make check`：580 passed，337 deselected |
+| Forge GPU 回归 | `make gpu`：216 passed，12 个后端专用测试 skipped |
+| wgpu GPU 回归 | `make gpu-wgpu`：175 passed，7 skipped |
 | MuJoCo physics | 183 passed，3 个当前主机 GPU 失败，718 deselected；严格审计与 conformance 通过 |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个真实 GPU 测试；200 次构造销毁 |
 | Renderer RGB | 对 MuJoCo 参考图 MAE 1.4295 |
@@ -208,6 +208,8 @@ P2 按以下顺序执行：
 - MjSpec body、geom、joint、site、camera、light 创建、删除、重命名和局部 transform 编辑
 - 经 MjSpec 校验的完整 MJCF source 编辑与运行时拓扑重建
 - Camera 与 Light 场景 helper、Inspector 编辑和选中相机实时预览
+- 模型相机与编辑器相机独立切换和显式返回入口
+- 独立 Settings 窗口、英文与简体中文切换和 CJK 字体回退
 - OpenGL 与 wgpu 的多 viewport texture、相机预览和场景 helper 对齐
 - actuator、tendon、sensor、equality 的模型级结构化属性面板、引用选择、MjSpec 校验与文档恢复
 - 模型根 transform 拖动提交合并、无变化编辑快速路径和大型组合场景编辑性能基线

@@ -12,7 +12,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 ## 当前状态
 
-2026-08-22，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
+2026-08-24，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
 [STATUS.md](STATUS.md)。SDF iteration visualization 排入 P3。
 
 | 范围 | 状态 | 验收结果 |
@@ -25,24 +25,24 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | P1 渲染正确性 | 完成 | `texuniform`、透明排序、100 灯光和 8 个本地阴影槽位通过 |
 | P1 图像门槛 | 完成 | parity、golden、material parity 和完整 GPU 回归通过 |
 | wgpu 渲染后端 | 完成 | macOS Metal、Linux Vulkan、Renderer API 和交互式 Viewer 通过 |
-| P2 编辑器与生产化 | 进行中 | 编辑历史、运行时多模型组合完成；组合文档、第二物理后端、发布和规模稳定性待完成 |
+| P2 编辑器与生产化 | 进行中 | 编辑器与前三项规模门槛完成；第二物理后端和平台发布暂缓，长连接与格式兼容性待完成 |
 
 ## 验收基线
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | `make check`：528 passed，326 deselected |
-| Forge GPU 回归 | `make gpu`：207 passed |
-| wgpu GPU 回归 | `make gpu-wgpu`：164 passed，7 skipped |
-| MuJoCo physics | 186 passed，658 deselected |
-| Renderer API | 每个后端 6 个 CPU 合约、10 个真实 GPU 测试、200 次构造销毁 |
+| 核心质量 | `make check`：575 passed，334 deselected |
+| Forge GPU 回归 | 上次完整基线 209 passed；当前主机受 EGL 0x3001 和 shared-MSAA picking 限制 |
+| wgpu GPU 回归 | `make gpu-wgpu`：172 passed，7 skipped |
+| MuJoCo physics | 183 passed，3 个当前主机 GPU 失败，718 deselected；严格审计与 conformance 通过 |
+| Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个真实 GPU 测试；200 次构造销毁 |
 | Renderer RGB | 对 MuJoCo 参考图 MAE 1.4295 |
 | Renderer depth | 误差 p95 0.00037 m |
 | Renderer segmentation | 像素一致率 0.999938 |
 | MuJoCo parity | 5 个视角平均 edge IoU 0.247，平均 luma error 17.7，28/29 检查通过 |
 | Golden images | 6/6 通过 |
 | MuJoCo 审计 | 严格模式通过；SDF 记录为延后项 |
-| 反向回归 | 50/50 mutation gates 通过 |
+| 反向回归 | 43/50 mutation gates；7 个既有 Forge/gizmo gate 待同步维护 |
 
 验收产物统一写入 `output/`。
 
@@ -203,17 +203,14 @@ P2 按以下顺序执行：
 - File 菜单、多文件拖放、Hierarchy 模型分组和移除入口
 - OpenGL 与 wgpu 的静态编辑回归
 - Forge 组合文档、文档相对路径、资源目录与缺失资源诊断
+- 缺失资源交互式重定位和批量路径修复
 - MJCF/URDF 模型根 transform 编辑和文档恢复
 - MjSpec body、geom、joint、site、camera、light 创建、删除、重命名和局部 transform 编辑
 - 经 MjSpec 校验的完整 MJCF source 编辑与运行时拓扑重建
 - Camera 与 Light 场景 helper、Inspector 编辑和选中相机实时预览
 - OpenGL 与 wgpu 的多 viewport texture、相机预览和场景 helper 对齐
-
-后续工作：
-
-- 缺失资源交互式重定位和批量路径修复
-- actuator、tendon、sensor、equality 的结构化属性面板
-- 大型组合场景的增量重编译和编辑性能基线
+- actuator、tendon、sensor、equality 的模型级结构化属性面板、引用选择、MjSpec 校验与文档恢复
+- 模型根 transform 拖动提交合并、无变化编辑快速路径和大型组合场景编辑性能基线
 
 验收入口：
 
@@ -224,13 +221,14 @@ make entity-edit
 make undo-redo
 make model-composition
 make workspace-edit
+make editor-performance
 make scene-entities BACKEND=forge
 make scene-entities BACKEND=wgpu
 ```
 
 ### P2.2 真实第二物理后端
 
-Newton 适配安排在 MuJoCo 编辑与渲染工作流稳定之后。
+当前项目优先级暂缓。恢复后先重新评估 Newton 等候选的 Python binding，再执行：
 
 - 选择维护活跃且具有稳定 Python binding 的物理引擎
 - 发布稳定 scene source 和动态 scene frame
@@ -249,11 +247,28 @@ Newton 适配安排在 MuJoCo 编辑与渲染工作流稳定之后。
 
 ### P2.4 稳定性与规模
 
-- 长时间仿真和 Viewer 内存稳定性
-- 大模型加载、切换和重复销毁
-- 多相机离屏 Renderer 并发
+已完成：
+
+- 10,000 帧稳定性基线、Viewer 热帧缓冲复用和 Python 内存增长门槛
+- 256-body 模型加载、切换、重复销毁与显式资源释放
+- 三个离屏 Renderer 的命名相机交错渲染和部分关闭后继续使用
+
+后续工作：
+
 - CLI/RPC 长连接、超时和错误恢复
 - 录制与快照格式兼容性
+
+验收入口：
+
+```bash
+make stability BACKEND=wgpu
+```
+
+### wgpu 运行时改进
+
+已完成 GPU timestamp query 的异步回读，以及运行时 1×/4× MSAA target 与 pipeline
+重建。其余项目跟随 wgpu-py 公开 API：原生 present-mode 选择、公开 surface release，
+以及上游适配 imgui 1.92 后移除本地兼容层。
 
 ## P3：延后项目
 

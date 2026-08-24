@@ -202,12 +202,18 @@ P2 按以下顺序执行：
 - MuJoCo `MjSpec` 运行时 MJCF/URDF 添加、移除、命名空间和状态迁移
 - File 菜单、多文件拖放、Hierarchy 模型分组和移除入口
 - OpenGL 与 wgpu 的静态编辑回归
+- Forge 组合文档、文档相对路径、资源目录与缺失资源诊断
+- MJCF/URDF 模型根 transform 编辑和文档恢复
+- MjSpec body、geom、joint、site、camera、light 创建、删除、重命名和局部 transform 编辑
+- 经 MjSpec 校验的完整 MJCF source 编辑与运行时拓扑重建
+- Camera 与 Light 场景 helper、Inspector 编辑和选中相机实时预览
+- OpenGL 与 wgpu 的多 viewport texture、相机预览和场景 helper 对齐
 
 后续工作：
 
-- Forge 资源目录、相对路径、缺失资源诊断和资源重定位
-- 保存包含 MJCF、URDF 与 Forge entity 引用的组合文档
-- 组合模型根 transform 编辑与文档恢复
+- 缺失资源交互式重定位和批量路径修复
+- actuator、tendon、sensor、equality 的结构化属性面板
+- 大型组合场景的增量重编译和编辑性能基线
 
 验收入口：
 
@@ -217,9 +223,14 @@ make editor-files
 make entity-edit
 make undo-redo
 make model-composition
+make workspace-edit
+make scene-entities BACKEND=forge
+make scene-entities BACKEND=wgpu
 ```
 
 ### P2.2 真实第二物理后端
+
+Newton 适配安排在 MuJoCo 编辑与渲染工作流稳定之后。
 
 - 选择维护活跃且具有稳定 Python binding 的物理引擎
 - 发布稳定 scene source 和动态 scene frame

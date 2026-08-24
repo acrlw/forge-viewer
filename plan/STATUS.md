@@ -1,6 +1,6 @@
 # 未完成项统计
 
-更新日期：2026-08-22
+更新日期：2026-08-23
 
 P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。按
 [ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 33 项：P2 编辑器与生产化 19 项、
@@ -10,11 +10,13 @@ wgpu 上游与运行时改进 5 项、P3 延后能力 9 项。
 
 ### 编辑器交互，3 项
 
-场景文件、Entity 生命周期、undo/redo、authored overlay 和运行时 MJCF/URDF 组合已经完成。
+场景文件、Entity 生命周期、undo/redo、authored overlay、运行时 MJCF/URDF 组合、模型根
+transform、资源目录、MjSpec 空间拓扑编辑、完整 MJCF source 编辑、Camera/Light helper 和
+选中相机预览已经完成。OpenGL 与 wgpu 共用同一套交互和文档接口。
 
-1. 完善 Forge 资源目录、相对路径、缺失资源诊断和资源重定位。
-2. 保存包含 MJCF、URDF 与 Forge entity 引用的组合文档。
-3. 编辑组合模型根 transform 并恢复文档状态。
+1. 增加缺失资源交互式重定位和批量路径修复。
+2. 增加 actuator、tendon、sensor、equality 的结构化属性面板。
+3. 建立大型组合场景的增量重编译和编辑性能基线。
 
 ### 真实第二物理后端，5 项
 
@@ -24,7 +26,7 @@ wgpu 上游与运行时改进 5 项、P3 延后能力 9 项。
 4. 接入 contact 与 debug draw。
 5. 通过 adapter conformance 和独立可视化验收。
 
-ToyPhysics 用于协议与 UI 验证。Newton 已进入后端矩阵，物理适配器仍待实现。
+ToyPhysics 用于协议与 UI 验证。Newton 适配安排在 MuJoCo 工作流稳定之后。
 
 ### 平台与发布，6 项
 
@@ -64,10 +66,10 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | 528 passed，326 deselected |
-| MuJoCo physics | 186 passed，658 deselected |
-| Forge GPU | 207 passed |
-| wgpu GPU | 164 passed，7 skipped |
+| CPU 与静态检查 | 555 passed，328 deselected |
+| MuJoCo physics | 186 passed，697 deselected |
+| Forge GPU | 209 passed |
+| wgpu GPU | 166 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约、10 个 GPU 测试 |
 | 源码任务标记 | 0 个 TODO、FIXME 或 HACK |
 

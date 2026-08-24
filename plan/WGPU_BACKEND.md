@@ -130,16 +130,22 @@ diagnostic overlays, and tooling. Current validation is summarized in
 - Full verification matrix: default suite, per-file GPU loop on both backends,
   `renderer-api` + `renderer-api-wgpu`, gallery vs `mujoco.Renderer` on both backends.
 
-Outcome: forge fixes MSAA sample counts at construction (`RenderTarget` created once,
-`resize`/`capture` preserve it; `RenderFlag.MSAA` only toggles per-pass GL multisample
-rasterization), so the wgpu backend keeps the same construction-time semantics and reports
-the pipeline-state delta via `capabilities().notes`. The caps sweep (both backends dumped
-side by side) found only honest technical differences: `id_msaa=False` (single-sampled
-export MRT), `pass_timing`/`gpu_timing=False` (no timestamp feature, frame CPU timing only),
-and `gl_version`/`renderer` reporting the wgpu-py version and adapter.
+Outcome: the initial caps sweep recorded `id_msaa=False`, construction-time MSAA, and CPU-only
+frame timing as honest backend differences. M11 supersedes the latter two limits while the
+single-sampled export MRT remains required by WebGPU.
+
+### M11 — Runtime timing and MSAA reconfiguration — done
+
+- Request `timestamp-query` as an optional shared-device feature and collect shadow,
+  reflection, outline, scene, export, and present durations through a three-buffer asynchronous
+  readback queue. Unsupported adapters retain CPU frame timing.
+- Make the existing MSAA render flag switch between 1× and the configured 4× count by rebuilding
+  render targets and sample-count-dependent pipelines at runtime.
+- Keep native present-mode selection, public surface release, and removal of the imgui 1.92
+  adapter on the upstream-dependent list. wgpu-py 0.32 exposes none of the first two APIs and its
+  imgui renderer still reads `cmd_lists_count`.
 
 ## Explicitly out of scope (recorded in caps notes)
 
-- GL state guarding, native GL entry points, GLSL hot reload, GPU timer queries
-  (CPU pass timing only; wgpu timestamp is an optional feature — revisit later).
+- GL state guarding, native GL entry points, and GLSL hot reload.
 - `imgui-bundle` upstream fix submission (tracked separately).

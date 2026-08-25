@@ -19,7 +19,6 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 |---|---|---|
 | P0 `mujoco.Renderer` 兼容 | 完成 | RGB、米制 depth、segmentation、相机、`MjvOption`、多实例和 200 次生命周期循环通过 |
 | P1 MuJoCo 可视化语义 | 完成 | 严格审计全部为精确对齐或 Forge 等价实现；SDF 标记为 P3 |
-| P1 IK 编辑 | 完成 | 机械臂、四足单腿和人体链条测试与可视化产物通过 |
 | P1 相机与场景状态 | 完成 | 命名书签、物理状态、选择、可视化选项和 Forge 覆盖值可保存与恢复 |
 | P1 CLI 与 RPC | 完成 | typed commands、本机 AF_UNIX 服务、版本、超时、错误和三种捕获模式通过 |
 | P1 渲染正确性 | 完成 | `texuniform`、透明排序、100 灯光和 8 个本地阴影槽位通过 |
@@ -31,7 +30,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | Fast 532 passed；Integration 44 passed |
+| 核心质量 | Fast 534 passed；Integration 44 passed |
 | Forge GPU 回归 | `make gpu`：216 passed，12 个后端专用测试 skipped |
 | wgpu GPU 回归 | `make gpu-wgpu`：175 passed，7 skipped |
 | MuJoCo physics | 217 passed，727 deselected；严格审计与 conformance 通过 |
@@ -117,22 +116,7 @@ make mujoco-overlays
 make adapter-conformance ADAPTER=mujoco CONFORMANCE_ASSET=deformables
 ```
 
-### P1.2 IK 编辑
-
-- 选择 body 或 site 作为目标
-- position 与 rotation target 独立控制
-- world frame 与 body frame 操作
-- 关节范围、锁定关节、权重、迭代次数和残差
-- 暂停状态写回 qpos 并运行 MuJoCo forward
-- 一次拖拽对应一次 undo 记录
-
-验收入口：
-
-```bash
-make mujoco-ik
-```
-
-### P1.3 相机书签与场景快照
+### P1.2 相机书签与场景快照
 
 - 相机来源、eye、target、up、轨道参数、投影、near、far 和 aspect
 - qpos、qvel、act、ctrl、time 和 mocap
@@ -148,7 +132,7 @@ make camera-state
 make scene-snapshot
 ```
 
-### P1.4 CLI 与 RPC
+### P1.3 CLI 与 RPC
 
 - load、reload、pause、resume、step 和 reset
 - set keyframe、set qpos 和 get state
@@ -166,7 +150,7 @@ make cli
 make rpc
 ```
 
-### P1.5 渲染正确性与图像门槛
+### P1.4 渲染正确性与图像门槛
 
 - MuJoCo primitive `texuniform` 三组面轴映射
 - 透明实例按相机深度稳定排序
@@ -315,7 +299,6 @@ make format-validation
 | Renderer | `make renderer-api` |
 | wgpu Renderer | `make renderer-api-wgpu`、`make gpu-wgpu` |
 | MuJoCo 语义 | `make mujoco-audit`、`make adapter-conformance ADAPTER=mujoco CONFORMANCE_ASSET=deformables` |
-| IK | `make mujoco-ik` |
 | 相机与快照 | `make camera-state`、`make scene-snapshot` |
 | CLI 与 RPC | `make cli`、`make rpc` |
 | 材质与阴影 | `make material-parity`、`make shadow-scheduling` |

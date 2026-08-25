@@ -72,7 +72,7 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | Fast 532 passed；Integration 44 passed |
+| CPU 与静态检查 | Fast 534 passed；Integration 44 passed |
 | MuJoCo physics | 217 passed，727 deselected |
 | Forge GPU | 216 passed，12 个后端专用测试 skipped |
 | wgpu GPU | 175 passed，7 skipped |

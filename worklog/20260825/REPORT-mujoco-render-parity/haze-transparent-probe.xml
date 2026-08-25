@@ -1,0 +1,16 @@
+<mujoco model="haze transparent probe">
+  <statistic center="0 3 0.5" extent="1"/>
+  <visual>
+    <map znear="0.01" zfar="10" haze="0.3"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+  </visual>
+  <asset>
+    <texture type="skybox" builtin="flat" rgb1="0 0 0" width="32" height="256"/>
+    <material name="probe" rgba="1 0 1 0.5" emission="1"/>
+  </asset>
+  <worldbody>
+    <geom name="floor" type="plane" size="0 0 0.05" rgba="0.05 0.05 0.05 1"/>
+    <geom name="behind_haze" type="sphere" pos="0 6 0.4" size="0.25" material="probe"/>
+    <camera name="probe" pos="0 0 1" xyaxes="1 0 0 0 0.1 0.995" fovy="45"/>
+  </worldbody>
+</mujoco>

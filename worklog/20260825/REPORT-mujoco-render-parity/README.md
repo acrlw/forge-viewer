@@ -1,6 +1,6 @@
 # MuJoCo humanoid 渲染对齐与历史任务收口
 
-状态：关键缺陷已修复，远端文档更新已合入，完整 CPU、physics、WGPU 与定向 Forge GPU 验证通过；待提交推送
+状态：关键缺陷已修复并提交，远端文档更新已合入，完整 CPU、physics、Forge/WGPU GPU 验证通过；待推送
 结论：humanoid 的聚光灯硬边来自 XML `cutoff="30"` 和 MuJoCo classic 的硬锥边界；最新截图中的棋盘锯齿则不是模型语义，而是 Forge 曾尝试按无限平面网格顶点插值聚光衰减造成，现已恢复逐像素计算。模型本身确实定义了 horizon haze。旧 interactive viewer/editor 曾把模型的 `far≈50.02` 覆盖成 `far≈243.69`，造成一条额外的远处几何带，该缺陷已经修复。另一个相机跟随缺陷来自模型根变换后恢复旧的世界坐标 free-joint 状态，现已随根变换同步变换 free-joint/mocap 状态。暂停状态下跟踪灯 gizmo 的回弹也已修复。
 涉及范围：MuJoCo adapter、Forge/WGPU skybox 与 haze pass、灯光与纹理、viewer/editor 模型替换、IK 删除、路线图与历史任务审计
 记录日期：2026-08-25
@@ -168,8 +168,8 @@ Forge 与 WGPU 旧实现只混合颜色、不写深度，导致 haze 后方的�
 
 ## 当前仍需处理
 
-1. 将当前 MuJoCo parity、texture replacement、haze depth、spotlight、跟踪灯写回、IK 删除与文档
-   收口按 coherent behavior 提交并推送。
+1. MuJoCo parity、texture replacement、haze depth、spotlight、跟踪灯写回与 IK 删除已提交为
+   `4dd27a7`；API reference 导航已提交为 `3f55f2e`，待推送到远端 `main`。
 2. 本机默认 EGL standalone 初始化仍报 `eglInitialize failed (0x3001)`；项目支持的
    `FORGE_VIEWER_GL=glfw` 路径已通过完整 physics/GPU。GPU 全量过程中发现并修复 outline pass 在
    shared ID attachment 驱动上污染 object ID 的问题，原先两项 `test_id_outline.py` 失败现均通过。
@@ -190,4 +190,6 @@ Forge 与 WGPU 旧实现只混合颜色、不写深度，导致 haze 后方的�
 | paused light gizmo | viewer/editor 连续刷新不回弹 | `top` 灯两入口均保持 `[0.35, -0.2, 2.15]` |
 | spotlight cutoff | Forge/WGPU 小角度回归与真实入口截图 | 45 个双后端 shading 用例通过；无棋盘锯齿 |
 | 完整 MuJoCo physics/audit/conformance | physics、严格审计、deformables | GLFW 路径 220 passed；审计与 conformance 通过 |
+| Forge GPU | 逐文件真实 OpenGL 回归 | 全部通过；包含 15 个 ID/outline 用例 |
 | WGPU GPU | 完整后端回归 | 全部通过 |
+| reverse verification | 注册回归变异必须被测试捕获 | 50/50 通过 |

@@ -13,9 +13,11 @@ wgpu 上游改进 3 项、P3 延后能力 9 项。
 场景文件、Entity 生命周期、undo/redo、authored overlay、运行时 MJCF/URDF 组合、模型根
 transform、资源目录、缺失资源重定位和批量路径修复、MjSpec 空间拓扑编辑、完整 MJCF
 source 编辑、Camera/Light helper、选中相机预览、四类模型级结构化组件编辑和大型组合
-场景性能基线已经完成。编辑器相机与模型相机状态独立，Settings 使用独立窗口，界面支持
-持久化的英文与简体中文切换以及 CJK 字体回退。模型根 transform 在拖动结束时只编译一次，
-无变化的 transform 与组件 Apply 跳过重编译。OpenGL 与 wgpu 共用同一套交互和文档接口。
+场景性能基线已经完成。编辑器相机与模型相机状态独立，Settings 使用居中模态面板，界面
+支持持久化的英文与简体中文切换以及 CJK 字体回退。相机预览支持固定视角与位置；Camera
+和 Light 的 Gizmo 在仿真运行时默认锁定。MJCF 导出复制文件资源、写入相对路径、重新编译
+并验证移动后的完整目录。模型根 transform 在拖动结束时只编译一次，无变化的 transform
+与组件 Apply 跳过重编译。OpenGL 与 wgpu 共用同一套交互、公开接口和示例。
 
 默认基线为 8 个模型、每个 64 bodies：添加模型中位数 16.00 ms，提交模型 transform
 25.06 ms，添加组件 35.54 ms，更新组件 27.65 ms。结果写入
@@ -71,16 +73,15 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | 580 passed，337 deselected |
-| MuJoCo physics | 183 passed，3 个当前主机 GPU 失败，718 deselected |
+| CPU 与静态检查 | Fast 522 passed；Integration 42 passed |
+| MuJoCo physics | 211 passed，715 deselected |
 | Forge GPU | 216 passed，12 个后端专用测试 skipped |
 | wgpu GPU | 175 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |
 | 源码任务标记 | 0 个 TODO、FIXME 或 HACK |
 
-MuJoCo 严格可视化审计和 deformables adapter conformance 均通过。当前 physics 聚合命令的
-三个失败分别为 EGL 离屏捕获初始化失败，以及 Forge shared-MSAA ID target 不支持单像素
-`read_id` 的两个 picking 检查。独立 Forge 与 wgpu GPU 回归均通过。
+MuJoCo 严格可视化审计、deformables adapter conformance、便携 MJCF round trip、严格文档
+构建和示例程序均通过。独立 Forge 与 wgpu GPU 回归均通过。
 
 wgpu 的 7 个 skip 覆盖 Forge 内部状态、CPU pass timing 表和 GL error state 等后端实现
 细节。GPU pass timing 已由 wgpu timestamp query 独立覆盖；这些 skip 不对应缺失的公开渲染

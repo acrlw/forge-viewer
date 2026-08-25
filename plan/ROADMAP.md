@@ -31,10 +31,10 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | `make check`：580 passed，337 deselected |
+| 核心质量 | Fast 522 passed；Integration 42 passed |
 | Forge GPU 回归 | `make gpu`：216 passed，12 个后端专用测试 skipped |
 | wgpu GPU 回归 | `make gpu-wgpu`：175 passed，7 skipped |
-| MuJoCo physics | 183 passed，3 个当前主机 GPU 失败，718 deselected；严格审计与 conformance 通过 |
+| MuJoCo physics | 211 passed，715 deselected；严格审计与 conformance 通过 |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个真实 GPU 测试；200 次构造销毁 |
 | Renderer RGB | 对 MuJoCo 参考图 MAE 1.4295 |
 | Renderer depth | 误差 p95 0.00037 m |
@@ -209,15 +209,19 @@ P2 按以下顺序执行：
 - 经 MjSpec 校验的完整 MJCF source 编辑与运行时拓扑重建
 - Camera 与 Light 场景 helper、Inspector 编辑和选中相机实时预览
 - 模型相机与编辑器相机独立切换和显式返回入口
-- 独立 Settings 窗口、英文与简体中文切换和 CJK 字体回退
+- 选中相机预览固定、仿真运行时 Camera/Light Gizmo 默认锁定和 Inspector 解锁
+- 居中模态 Settings、英文与简体中文切换和 CJK 字体回退
 - OpenGL 与 wgpu 的多 viewport texture、相机预览和场景 helper 对齐
 - actuator、tendon、sensor、equality 的模型级结构化属性面板、引用选择、MjSpec 校验与文档恢复
 - 模型根 transform 拖动提交合并、无变化编辑快速路径和大型组合场景编辑性能基线
+- 便携 MJCF 导出、资源相对路径、移动后重新编译和不可表示语义诊断
+- 分层测试说明、生成式 API 参考和基础到进阶的可运行示例
 
 验收入口：
 
 ```bash
 make editor
+make settings
 make editor-files
 make entity-edit
 make undo-redo

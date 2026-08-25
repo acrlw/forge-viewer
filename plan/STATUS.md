@@ -3,10 +3,10 @@
 更新日期：2026-08-25
 
 P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。按
-[ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 24 项：P2 编辑器与生产化 12 项、
+[ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 22 项：P2 编辑器与生产化 10 项、
 wgpu 上游改进 3 项、P3 延后能力 9 项。
 
-## P2：编辑器与生产化，12 项
+## P2：编辑器与生产化，10 项
 
 ### 编辑器交互，完成
 
@@ -14,8 +14,9 @@ wgpu 上游改进 3 项、P3 延后能力 9 项。
 transform、资源目录、缺失资源重定位和批量路径修复、MjSpec 空间拓扑编辑、完整 MJCF
 source 编辑、Camera/Light helper、选中相机预览、四类模型级结构化组件编辑和大型组合
 场景性能基线已经完成。编辑器相机与模型相机状态独立，Settings 使用居中模态面板，界面
-支持持久化的英文与简体中文切换以及 CJK 字体回退。相机预览支持固定视角与位置；Camera
-和 Light 的 Gizmo 在仿真运行时默认锁定。MJCF 导出复制文件资源、写入相对路径、重新编译
+支持持久化的英文与简体中文切换以及 Noto Sans SC 自动下载与 CJK 字体回退。相机预览支持
+固定视角或锁定实体并实时跟随；Camera 和 Light 的 Gizmo 在仿真运行时默认锁定。MJCF 导出
+复制文件资源、写入相对路径、重新编译
 并验证移动后的完整目录。模型根 transform 在拖动结束时只编译一次，无变化的 transform
 与组件 Apply 跳过重编译。OpenGL 与 wgpu 共用同一套交互、公开接口和示例。
 
@@ -41,14 +42,13 @@ ToyPhysics 用于协议与 UI 验证。真实第二物理后端按当前项目�
 4. 验证 wheel 构建、clean environment 安装和启动。
 5. 发布平台兼容矩阵与性能基线。
 
-### 稳定性与规模，2 项
+### 稳定性与规模，完成
 
 10,000 帧运行、Viewer 缓冲复用、256-body 模型 20 次加载循环和三个命名相机 Renderer
 交错渲染已经通过。稳定帧 RSS 增长为 0，Python 跟踪内存增长 18,275 bytes；模型生命周期
-RSS 增长 2,260,992 bytes，低于 8 MiB 门槛。剩余：
-
-1. 验证 CLI/RPC 长连接、超时和错误恢复。
-2. 建立录制与快照格式兼容性测试。
+RSS 增长 2,260,992 bytes，低于 8 MiB 门槛。RPC 支持单连接连续请求、并发客户端、超时后
+重连与错误恢复。场景 JSON 快照和 `.fvs` 录制支持 v1 输入与 v2 输出，并诊断未来版本和
+截断录制。
 
 ## wgpu 上游改进，3 项
 
@@ -72,8 +72,8 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | Fast 522 passed；Integration 42 passed |
-| MuJoCo physics | 211 passed，715 deselected |
+| CPU 与静态检查 | Fast 532 passed；Integration 44 passed |
+| MuJoCo physics | 217 passed，727 deselected |
 | Forge GPU | 216 passed，12 个后端专用测试 skipped |
 | wgpu GPU | 175 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |

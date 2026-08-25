@@ -209,7 +209,8 @@ P2 按以下顺序执行：
 - 经 MjSpec 校验的完整 MJCF source 编辑与运行时拓扑重建
 - Camera 与 Light 场景 helper、Inspector 编辑和选中相机实时预览
 - 模型相机与编辑器相机独立切换和显式返回入口
-- 选中相机预览固定、仿真运行时 Camera/Light Gizmo 默认锁定和 Inspector 解锁
+- 选中相机预览支持固定视角或锁定实体跟随，仿真运行时 Camera/Light Gizmo 默认锁定和
+  Inspector 解锁
 - 居中模态 Settings、英文与简体中文切换和 CJK 字体回退
 - OpenGL 与 wgpu 的多 viewport texture、相机预览和场景 helper 对齐
 - actuator、tendon、sensor、equality 的模型级结构化属性面板、引用选择、MjSpec 校验与文档恢复
@@ -257,16 +258,16 @@ make scene-entities BACKEND=wgpu
 - 10,000 帧稳定性基线、Viewer 热帧缓冲复用和 Python 内存增长门槛
 - 256-body 模型加载、切换、重复销毁与显式资源释放
 - 三个离屏 Renderer 的命名相机交错渲染和部分关闭后继续使用
-
-后续工作：
-
 - CLI/RPC 长连接、超时和错误恢复
-- 录制与快照格式兼容性
+- 场景快照 v1/v2 兼容与录制文件 v1/v2 兼容
+- 未来版本、损坏头和截断录制的诊断
 
 验收入口：
 
 ```bash
 make stability BACKEND=wgpu
+make rpc-soak
+make format-compat
 ```
 
 ### wgpu 运行时改进

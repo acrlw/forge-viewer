@@ -42,7 +42,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | MuJoCo parity | 5 个视角平均 edge IoU 0.247，平均 luma error 17.7，28/29 检查通过 |
 | Golden images | 6/6 通过 |
 | MuJoCo 审计 | 严格模式通过；SDF 记录为延后项 |
-| 反向回归 | 43/50 mutation gates；7 个既有 Forge/gizmo gate 待同步维护 |
+| 反向回归 | 50/50 mutation gates |
 
 验收产物统一写入 `output/`。
 
@@ -244,7 +244,6 @@ make scene-entities BACKEND=wgpu
 
 ### P2.3 平台与发布
 
-- macOS、Linux 和 Windows CPU CI
 - OpenGL 3.3 与 macOS OpenGL 4.1 验证
 - Windows D3D12 的 wgpu 安装、交互窗口和视觉回归
 - 支持平台的 GPU smoke capture

@@ -3,10 +3,10 @@
 更新日期：2026-08-25
 
 P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。按
-[ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 25 项：P2 编辑器与生产化 13 项、
+[ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 24 项：P2 编辑器与生产化 12 项、
 wgpu 上游改进 3 项、P3 延后能力 9 项。
 
-## P2：编辑器与生产化，13 项
+## P2：编辑器与生产化，12 项
 
 ### 编辑器交互，完成
 
@@ -33,14 +33,13 @@ source 编辑、Camera/Light helper、选中相机预览、四类模型级结构
 
 ToyPhysics 用于协议与 UI 验证。真实第二物理后端按当前项目优先级暂缓。
 
-### 平台与发布，6 项
+### 平台与发布，5 项
 
-1. 建立 macOS、Linux 和 Windows CPU CI。
-2. 验证 OpenGL 3.3 与 macOS OpenGL 4.1。
-3. 验证 Windows D3D12 的 wgpu 安装、交互窗口和视觉回归。
-4. 为支持的平台建立 GPU smoke capture。
-5. 验证 wheel 构建、clean environment 安装和启动。
-6. 发布平台兼容矩阵与性能基线。
+1. 验证 OpenGL 3.3 与 macOS OpenGL 4.1。
+2. 验证 Windows D3D12 的 wgpu 安装、交互窗口和视觉回归。
+3. 为支持的平台建立 GPU smoke capture。
+4. 验证 wheel 构建、clean environment 安装和启动。
+5. 发布平台兼容矩阵与性能基线。
 
 ### 稳定性与规模，2 项
 
@@ -78,6 +77,7 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 | Forge GPU | 216 passed，12 个后端专用测试 skipped |
 | wgpu GPU | 175 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |
+| 反向回归 | 50/50 mutation gates |
 | 源码任务标记 | 0 个 TODO、FIXME 或 HACK |
 
 MuJoCo 严格可视化审计、deformables adapter conformance、便携 MJCF round trip、严格文档

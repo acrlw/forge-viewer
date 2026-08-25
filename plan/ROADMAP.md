@@ -25,16 +25,16 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | P1 渲染正确性 | 完成 | `texuniform`、透明排序、100 灯光和 8 个本地阴影槽位通过 |
 | P1 图像门槛 | 完成 | parity、golden、material parity 和完整 GPU 回归通过 |
 | wgpu 渲染后端 | 完成 | macOS Metal、Linux Vulkan、Renderer API 和交互式 Viewer 通过 |
-| P2 编辑器与生产化 | 进行中 | 编辑器与前三项规模门槛完成；第二物理后端和平台发布暂缓，长连接与格式兼容性待完成 |
+| P2 编辑器与生产化 | 进行中 | 编辑器与稳定性规模门槛完成；第二物理后端和平台发布暂缓 |
 
 ## 验收基线
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | Fast 522 passed；Integration 42 passed |
+| 核心质量 | Fast 532 passed；Integration 44 passed |
 | Forge GPU 回归 | `make gpu`：216 passed，12 个后端专用测试 skipped |
 | wgpu GPU 回归 | `make gpu-wgpu`：175 passed，7 skipped |
-| MuJoCo physics | 211 passed，715 deselected；严格审计与 conformance 通过 |
+| MuJoCo physics | 217 passed，727 deselected；严格审计与 conformance 通过 |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个真实 GPU 测试；200 次构造销毁 |
 | Renderer RGB | 对 MuJoCo 参考图 MAE 1.4295 |
 | Renderer depth | 误差 p95 0.00037 m |
@@ -259,15 +259,15 @@ make scene-entities BACKEND=wgpu
 - 256-body 模型加载、切换、重复销毁与显式资源释放
 - 三个离屏 Renderer 的命名相机交错渲染和部分关闭后继续使用
 - CLI/RPC 长连接、超时和错误恢复
-- 场景快照 v1/v2 兼容与录制文件 v1/v2 兼容
-- 未来版本、损坏头和截断录制的诊断
+- 场景快照与录制文件的当前格式验证
+- 版本不匹配、损坏头和截断录制的诊断
 
 验收入口：
 
 ```bash
 make stability BACKEND=wgpu
 make rpc-soak
-make format-compat
+make format-validation
 ```
 
 ### wgpu 运行时改进

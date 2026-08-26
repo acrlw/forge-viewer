@@ -1,7 +1,7 @@
 # forge-viewer 编辑器加载、meshdir 与大场景性能专项复核
 
 > 日期：2026-08-26<br>
-> 审查基线：远端 `55bb83d`；二次回归修复基线：`a6ac479`<br>
+> 审查基线：远端 `55bb83d`；Plane/joint gizmo 修复基线：`fbae7e5`<br>
 > 方法：源码路径审计、G1 23-DOF 实物模型复现、CPU microbenchmark、定向回归与已有报告交叉复核。
 >
 > 范围说明：4096 个机器人只是用于识别架构边界的假设压力样例，不是当前产品规模或本轮实现目标。
@@ -30,6 +30,12 @@
 8. link DOF gizmo 已按真实约束实现：hinge 只显示轴向旋转环，slide 只显示轴向箭头，ball 使用旋转 gizmo，
    free joint 继续走自由刚体 transform；多直接关节必须在 Joints 面板明确选择。ball 四元数通过一次原子
    qpos batch 写入，只调用一次 `mj_forward`。
+9. G1 的 23 个 link 均为单 direct hinge joint。逐 link 实测表明，暂停后 23/23 都能取得 joint-axis rotation
+   gizmo；实际混淆来自 Inspector 仍只检查 `node.posable`，错误显示“只能使用 Joints panel”。Inspector 现与
+   viewport 共用 `ObjectGizmo.evaluate()`，会明确显示 `hinge / revolute joint` 已启用；运行中仍由物理状态锁定。
+10. `ModelEditBatch` 已实现原子 model-element topology 事务：批内 key 可引用刚创建的 body/geom，所有操作先
+    作用于 MjSpec 副本，成功后只 compile/install 一次，失败不保留半成品，并只形成一条 Undo 记录。G1 上
+    端到端提交 8 个 body 的三轮中位数从 470.68 ms 降为 61.92 ms，约 7.6×。
 
 ## 本轮用户问题与处理状态
 
@@ -42,6 +48,8 @@
 | Unsaved changes 裁字、偏心、留白 | modal 每帧按当前 viewport 居中并限制在 work area；文件名独立换行；三按钮等宽填满一行 | 已修 |
 | 点击 link 后很难找到 joint | Joints 面板优先显示所选 body 的 direct joints；运行时禁止 qpos 编辑并明确要求 Pause；大列表分页 | 已修 |
 | link DOF gizmo | hinge/slide/ball/free 分别使用约束匹配的 gizmo；多 direct joint 在面板显式选择 | 已修 |
+| G1 暂停后仍提示只能使用 Joints panel | Inspector 改用 viewport 的真实 gizmo 判定；23 个 hinge link 全量复现通过 | 已修 |
+| 多 topology 操作重复 compile | 新增原子 `ModelEditBatch`；批内引用、单次 compile、单条 Undo、失败回滚 | 已修 |
 | Unitree meshes/meshes | 只在双层文件不存在、单层文件存在时，在内存中去掉重复前缀；不改源文件 | 已修 |
 
 ## 可验收需求台账
@@ -57,18 +65,19 @@
 | 5 | Plane 可编辑长宽并支持 Undo/Redo/保存 | 完成 | 直接更新 compiled model 和 spec，不为每次拖动 compile |
 | 6 | 加载不再是全屏阻塞页 | 完成 | 单 worker；旧 viewport 保持；中央 Loading widget |
 | 7 | 加载显示动作、文件、耗时和排队数 | 完成 | 不伪造百分比 |
-| 8 | 显示真实 parser/mesh/compiler/GPU 阶段进度 | 部分 | MuJoCo binding 无阶段回调；需跨层显式 job telemetry |
-| 9 | Unsaved changes 对话框居中且按钮不裁字 | 完成（代码） | CPU/UI 测试通过，GPU gallery 仍待可用环境目视 |
+| 8 | 显示真实 parser/mesh/compiler/GPU 阶段进度 | 明确不做 | MuJoCo binding 无真实阶段回调；按本轮决定保留动作、路径、耗时和队列，不伪造阶段 |
+| 9 | Unsaved changes 对话框居中且按钮不裁字 | 完成（代码） | CPU/UI 测试通过；按本轮决定不以当前 EGL 环境的 gallery 作为阻塞项 |
 | 10 | 错误文本可复制 | 完成 | 文件 modal、资源修复、Inspector、Control message |
 | 11 | Unitree `meshes/meshes` 窄兼容 | 完成 | 仅磁盘证明短路径存在时内存修复 |
-| 12 | 单 hinge/slide/ball/free link 的 viewport DOF gizmo | 完成 | MuJoCo 动态测试覆盖 hinge/slide/ball；free 沿用 SetPose |
+| 12 | 单 hinge/slide/ball/free link 的 viewport DOF gizmo | 完成 | MuJoCo 动态测试覆盖 hinge/slide/ball；G1 23 个 hinge link 暂停后 23/23 可用；free 沿用 SetPose |
 | 13 | 多直接关节不猜测并可选 gizmo 目标 | 完成 | Joints 面板 `Use gizmo`，选择按 structure generation 失效 |
 | 14 | 检查 camera/light/scene/UI 的 O(N²) 与高基数热点 | 完成 | 修复项和剩余 GPU 乘法风险见性能章节 |
-| 15 | 直接接口与 batch 接口有真实扩展点 | 完成（当前范围） | debug plural batch、SceneFrame arrays、原子 `SetQposBatch`/remote |
+| 15 | 直接接口与 batch 接口有真实扩展点 | 完成（当前范围） | debug plural batch、SceneFrame arrays、原子 `SetQposBatch`/remote、单次 compile 的 `ModelEditBatch` |
 | 16 | 4096 机器人专用 batch renderer / culling / LOD | 明确延期 | 用户说明当前不做；等真实规模和 GPU profile 触发 |
 
-另有一个非上述 16 项的新架构工作：topology `ModelEditBatch` 尚未实现。当前单次 add/remove/undo 仍各 compile
-一次；它不影响本轮 Plane 正确性，但多结构操作仍缺少“一批 spec 改动只 compile 一次”的事务语义。
+`ModelEditBatch` 当前覆盖 model-element 的 add/remove/rename；model-level actuator、tendon、sensor 和
+equality structured editor 仍使用各自的单操作接口。当前 UI 没有一次手势批量修改这些 component 的入口，
+因此本轮没有为尚不可触发的 component batch 增加额外引用协议。
 
 ## meshdir：错误、兼容输入还是合法输入
 
@@ -252,12 +261,28 @@ batch 应有一个整体 retained ID；需要独立删除/寿命时才拆分，�
 `SetQposBatch` 先整体验证长度、整数索引、唯一性、范围和有限值，再一次写入并 forward；remote adapter 保留
 同样的原子命令边界。它当前直接服务 ball joint gizmo，不是为未来假设场景预留的空接口。
 
-### 仍缺的 batch/transaction
+### ModelEditBatch 的实现与边界
 
-模型结构编辑应增加显式 `ModelEditBatch` / spec transaction：在内存 spec 上应用多个 add/remove/update，
-最后只 compile 一次，并形成一个 undo entry。现有 `BeginEditTransaction` 主要合并 history，不能保证 adapter
-只 compile 一次。单个 plane 与单次 undo 各自仍需要一次 compile，适合再接入通用后台 Session job；多个
-结构操作则优先减少 compile 次数。
+`ModelEditBatch` 与 `BeginEditTransaction` 分工不同：前者是 adapter topology 事务，保证一批 MjSpec
+model-element add/remove/rename 只 compile/install 一次；后者只是跨多个普通 command 合并 history，不承诺
+减少 compile。批内 `ModelElementRef(batch_key=...)` 只解决真实需要——后续操作引用尚未 compile、因而还没有
+hierarchy node ID 的新元素。
+
+失败原子性由 MjSpec 副本保证。批内任一重复名称、未知 key、非法父节点或 compile 错误都会恢复原 spec 和
+geometry object-ID 映射；测试同时断言 compile 未发生且临时元素不可见。成功后 Session 只刷新一次结构并形成
+一条 Undo 记录。单次 add/remove/rename 沿用直接 command，内部复用同一原子路径；Plane 等单操作不会被等待
+凑批。
+
+性能计时从 `Session.submit()` 前开始，到命令返回后结束，包含 edit-state capture、MjSpec 修改、compile、
+install 和 Session structure refresh。输入为 G1 23-DOF URDF，每轮向 world 增加 8 个 body，三轮结果如下：
+
+| 提交方式 | 三轮耗时 (ms) | 中位数 (ms) | compile 次数/轮 |
+|---|---|---:|---:|
+| 8 个 `AddModelElement` 顺序提交 | 534.90 / 464.48 / 470.68 | 470.68 | 8 |
+| 1 个 `ModelEditBatch`，含 8 个 add | 61.92 / 61.97 / 59.24 | 61.92 | 1 |
+
+该样例的端到端中位数降低约 7.6×。它证明当前已支持的 model-element topology 工作流能从 batch 获益，
+不代表 component XML 编辑、任意模型规模或 GPU 更新都固定获得相同比例。
 
 remote publisher 还需要与 batch 正交的 backpressure API，例如 `try_publish_frame()` 或 `max_publish_hz`。
 当前 no-viewer 已避免重复 pickle，latest-only 也避免网络 backlog，但有 viewer 时调用线程仍先同步 pickle
@@ -288,10 +313,9 @@ Euler 文档和 RenderBackend contract 等问题；多数已通过独立动态�
 
 当前应先完成：
 
-1. 在可用 GPU/EGL 环境完成现有 Forge/WGPU gallery 验收，不为假设规模新增渲染架构。
-2. 讨论结构编辑的后台 Session job 与“一次 compile”的 spec transaction；确认交互和撤销语义后再实现。
-3. 在可用 GPU/EGL 环境目视验收 link DOF gizmo 和 Plane outline；CPU/MuJoCo 交互与约束写回已经完成。
-4. 只有在普通编辑场景实际复现文本过载时，再为 label/contact/tendon text 增加 selected-only、viewport
+1. 按本轮决定不追踪无真实 callback 的 MuJoCo 阶段进度，也不处理当前机器的 EGL 初始化阻塞。
+2. 后续真实出现一次 UI 动作修改多个 model component 时，再扩展 component batch；当前不为不可触发输入加空协议。
+3. 只有在普通编辑场景实际复现文本过载时，再为 label/contact/tendon text 增加 selected-only、viewport
    culling 或预算。
 
 以下工作仅在真实规模、profile 和 GPU 数据证明需要时启动：拆分 static/dynamic instance buffers、instance

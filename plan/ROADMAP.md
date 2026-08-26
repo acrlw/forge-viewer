@@ -12,7 +12,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 ## 当前状态
 
-2026-08-25，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
+2026-08-26，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
 [STATUS.md](STATUS.md)。SDF iteration visualization 排入 P3。
 
 | 范围 | 状态 | 验收结果 |
@@ -41,6 +41,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | MuJoCo parity | 5 个视角平均 edge IoU 0.247，平均 luma error 17.7，28/29 检查通过 |
 | Golden images | 6/6 通过 |
 | MuJoCo 审计 | 严格模式通过；SDF 记录为延后项 |
+| 官方模型语料 | Downloads 81/81、Projects 77/77；Forge 与 wgpu 均通过 8 视角、segmentation 和动态步进 |
 | 反向回归 | 50/50 mutation gates |
 
 验收产物统一写入 `output/`。
@@ -113,8 +114,12 @@ make mujoco-audit
 make mujoco-visuals
 make mujoco-debug
 make mujoco-overlays
+make mujoco-model-suite
 make adapter-conformance ADAPTER=mujoco CONFORMANCE_ASSET=deformables
 ```
+
+模型语料回归覆盖两个官方 `model/` 目录，并修复了独立 flex UV 索引集和 MuJoCo cube
+texture 六面布局。MuJoCo 主仓库的 plugin 与 SDF 示例均可编译、适配和渲染。
 
 ### P1.2 相机书签与场景快照
 
@@ -267,6 +272,13 @@ make format-validation
 - SDF iteration trace 数据入口
 - iteration、contact 和收敛状态绘制
 - 专用模型、性能预算和验收场景
+- 补齐 MuJoCo Warp 的外部资源包后纳入模型语料：Aloha SDF 场景和 collision SDF torus
+
+### 外部模型资源完整性
+
+- MuJoCo Warp Aloha、Panda、Unitree G1、render mug 和 Apollo 场景缺少仓库外资源
+- 为外部资源包定义清单、下载入口和缓存目录
+- 将完整资源包加入 `mujoco-model-suite` 多视角回归
 
 ### Live View 增强
 
@@ -298,7 +310,7 @@ make format-validation
 | 核心质量 | `make check`、`make reverse` |
 | Renderer | `make renderer-api` |
 | wgpu Renderer | `make renderer-api-wgpu`、`make gpu-wgpu` |
-| MuJoCo 语义 | `make mujoco-audit`、`make adapter-conformance ADAPTER=mujoco CONFORMANCE_ASSET=deformables` |
+| MuJoCo 语义 | `make mujoco-audit`、`make mujoco-model-suite`、`make adapter-conformance ADAPTER=mujoco CONFORMANCE_ASSET=deformables` |
 | 相机与快照 | `make camera-state`、`make scene-snapshot` |
 | CLI 与 RPC | `make cli`、`make rpc` |
 | 材质与阴影 | `make material-parity`、`make shadow-scheduling` |

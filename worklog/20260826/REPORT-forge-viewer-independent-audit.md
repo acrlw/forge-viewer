@@ -3,7 +3,9 @@
 > 状态：已先完成并落盘独立审查，随后阅读已有 agent code review，完成交叉复核、
 > 明确 bug 修复与 CPU/MuJoCo 验证。
 >
-> 代码快照：`0a8178b47f8c5a3249d6b28428981da1d4165a5c`
+> 独立审查基线：`0a8178b47f8c5a3249d6b28428981da1d4165a5c`
+>
+> 最终功能代码快照：`11b5beb`（包含远端 `55bb83d`）
 >
 > 审查日期：2026-08-26
 >
@@ -35,12 +37,10 @@ forge-viewer 的总体架构方向是成立的：稳定结构 `SceneSource`、�
 
 ## 最终验证状态
 
-- `make check`：566 个 fast 测试、56 个 integration 测试通过。
-- `.venv/bin/pytest -q -m "physics and not gpu"`：154 个测试通过，1 条既有 MuJoCo flex warning。
+- `make check`：575 个 fast 测试、60 个 integration 测试通过。
+- `.venv/bin/pytest -q -m "physics and not gpu"`：162 个测试通过，1 条既有 MuJoCo flex warning。
 - `make mujoco-audit`：严格审计通过。
 - `make adapter-conformance ADAPTER=mujoco CONFORMANCE_ASSET=deformables`：全部检查通过。
-- `.venv/bin/pytest -q -m physics`：231 个通过，唯一失败是 GPU capture 在创建 context 时
-  `eglInitialize failed (0x3001)`；没有进入功能断言。
 - `make gpu`：同样在首个 EGL context 初始化处失败。当前环境无法给出真实 GPU/golden 结论，需在可用
   EGL/GPU 环境复核。
 

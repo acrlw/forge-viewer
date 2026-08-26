@@ -44,7 +44,7 @@ golden，不用文件哈希代替功能验收。
 
 ## 当前环境记录
 
-- **已核对（2026-08-26 工作树）**：`make check` 为 566 fast + 56 integration 通过。
-- **已核对**：`physics and not gpu` 为 154 通过；MuJoCo audit 与 deformables conformance 通过。
-- **待确认**：当前容器 `eglInitialize failed (0x3001)`，完整 physics 的唯一失败和 `make gpu` 首个失败均发生
-  在 context 初始化，未进入渲染断言；需在可用 EGL/GPU 环境重跑。
+- **已核对（2026-08-26，功能代码 `11b5beb`）**：`make check` 为 575 fast + 60 integration 通过。
+- **已核对**：`physics and not gpu` 为 162 通过；MuJoCo audit 与 deformables conformance 通过。
+- **待确认**：当前容器 `eglInitialize failed (0x3001)`；`make gpu` 的首个失败发生在 context 初始化，
+  未进入渲染断言，需在可用 EGL/GPU 环境重跑。

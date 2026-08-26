@@ -10,7 +10,7 @@ ViewerApp，最后返回组合根 `Viewer`。
 - **已核对**：`build(asset, backend_name="mujoco")` 中 `backend_name` 实际选择 scene adapter；渲染端由
   `FORGE_VIEWER_BACKEND=forge|wgpu` 选择。
 - **观察到**：这里的 `backend` 一词承担两种角色，是公共 API 的历史命名债，见 08/10 章。
-- **已核对**：构造中间失败必须逆序释放已创建 window/backend/bridge/adapter；当前审查工作树已补此保护。
+- **已核对**：构造中间失败必须逆序释放已创建 window/backend/bridge/adapter；功能代码 `11b5beb` 已补此保护。
 
 ## 每帧主链
 
@@ -33,7 +33,7 @@ ViewerApp，最后返回组合根 `Viewer`。
 - 公共 `Renderer` 独立拥有 adapter、backend 与可选 GL context。
 
 **已核对**：审查前 `ViewerApp.run()` 与 CLI `finally` 重复释放，而 `Viewer.release()` 又漏掉 preview；当前
-工作树改为显式、幂等的组合根释放，并实现 `Viewer` context manager。
+功能代码 `11b5beb` 改为显式、幂等的组合根释放，并实现 `Viewer` context manager。
 
 ## 排障抓手
 

@@ -9,8 +9,8 @@
 2. **ID 与 slot（已核对）**：camera/keyframe/equality/workspace/selection 已出现实际 bug。新增实体类型必须明确
    stable ID、source slot 与 physics index 三个空间。
 3. **双 backend 漂移（观察到）**：共享算法仍有复制；每次修 Forge/WGPU 一端都搜索另一端和 shader 常量。
-4. **RenderBackend 协议不完整（待确认）**：真实 Renderer/App 还消费 target、background、transparent-ID、
-   capture size 等成员；需要一次独立接口设计，不宜只不断把方法塞进大 Protocol。
+4. **RenderBackend 协议宽度（观察到）**：协议已覆盖 target、background、transparent-ID 与 capture size，
+   Null/Forge/WGPU 也有 contract test；后续新增能力仍应先判断是否属于核心后端，而不是继续无边界扩张。
 5. **frozen ndarray（观察到）**：跨线程/缓存可被原地修改；当前以性能约定维持，文档与边界 copy 必须明确。
 
 ## 依赖漂移
@@ -33,9 +33,9 @@
 - `backend_name` 同时被用户理解为 physics adapter 与 render backend；在弃用设计确认前不要静默改名。
 - `Scene.set_light` 的 index 与 `SceneLight.light_id` 的 stable ID 语义仍不够直观，是下一轮 API 设计重点。
 
-## 当前工作树状态
+## 当前核对状态
 
-- 基线是 `0a8178b47f8c5a3249d6b28428981da1d4165a5c`；本次审查修复尚未提交。
+- 2026-08-26 最终功能代码快照是 `11b5beb`，基于远端 `55bb83d`；审查修复已提交。
 - 已修的具体问题、测试和与另一份 review 的差异以
   [2026-08-26 独立审查](../20260826/REPORT-forge-viewer-independent-audit.md) 为准。
-- 修复合入后更新本章与首页 commit；若修复被拆分或退回，不能把这里的“已核对工作树”误写成 main 事实。
+- 后续修改功能代码时更新本章与首页快照；不能把未提交工作树结论误写成 `main` 事实。

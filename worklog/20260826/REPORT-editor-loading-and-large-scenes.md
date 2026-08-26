@@ -1,7 +1,7 @@
 # forge-viewer 编辑器加载、meshdir 与大场景性能专项复核
 
 > 日期：2026-08-26<br>
-> 审查基线：远端 `55bb83d`；最终功能代码快照：`11b5beb`<br>
+> 审查基线：远端 `55bb83d`；二次回归修复基线：`a6ac479`<br>
 > 方法：源码路径审计、G1 23-DOF 实物模型复现、CPU microbenchmark、定向回归与已有报告交叉复核。
 >
 > 范围说明：4096 个机器人只是用于识别架构边界的假设压力样例，不是当前产品规模或本轮实现目标。
@@ -24,6 +24,12 @@
    1 GiB/s，且目前没有实例级 frustum/LOD culling。GPU 顶点、像素、阴影和透明 draw call 会成为主风险。
 6. 高基数 debug draw 应明确使用 plural batch API。4096 个 scalar arrows 与一个 arrows batch 最终几何量
    相同，但前者在 Python 调用、pickle 和 retained ID 上明显更贵。
+7. 二次回归确认 MuJoCo world geom 过去沿用 body 0，导致新建有限 Plane 的 object ID 为 0，无法在 viewport
+   拾取或高亮；Workspace 还拒绝把尺寸编辑转发给 MuJoCo。现已给有限 world Plane 分配跨 topology recompile
+   稳定的 object ID，并支持 Plane 位姿、长宽、重命名、Undo/Redo 和 spec 持久化。
+8. link DOF gizmo 已按真实约束实现：hinge 只显示轴向旋转环，slide 只显示轴向箭头，ball 使用旋转 gizmo，
+   free joint 继续走自由刚体 transform；多直接关节必须在 Joints 面板明确选择。ball 四元数通过一次原子
+   qpos batch 写入，只调用一次 `mj_forward`。
 
 ## 本轮用户问题与处理状态
 
@@ -32,11 +38,37 @@
 | 相机 far plane 太近 | MuJoCo camera hint 最低使用 `200 * extent`；Camera 面板可调到 100000 m | 已修 |
 | 新建 plane 会被机器人撞歪 | topology-capable MuJoCo workspace 创建 world-owned `geom:plane`，body 0、静态可碰撞 | 已修 |
 | 加载阻塞且只有全屏等待 | 文件对话框、拖放、Open/Reload 进入单 worker 队列；旧 viewport 保持刷新，中央浮动 widget 显示动作、路径、耗时、队列 | 已修 |
-| 错误不便反馈 | 文件操作错误框增加 `Copy error`，复制完整错误文本 | 已修 |
+| 错误不便反馈 | 文件错误、资源修复、Inspector 错误和 Control 消息都提供复制入口 | 已修 |
 | Unsaved changes 裁字、偏心、留白 | modal 每帧按当前 viewport 居中并限制在 work area；文件名独立换行；三按钮等宽填满一行 | 已修 |
-| 点击 link 后很难找到 joint | Joints 面板优先显示所选 body 的 direct joints；运行时禁止 qpos 编辑并明确要求 Pause；大列表分页 | 部分完成 |
-| link DOF gizmo | hinge/slide 可映射一维标尺；ball/free 与多 joint body 需要明确选择和原子提交语义 | 待设计 |
+| 点击 link 后很难找到 joint | Joints 面板优先显示所选 body 的 direct joints；运行时禁止 qpos 编辑并明确要求 Pause；大列表分页 | 已修 |
+| link DOF gizmo | hinge/slide/ball/free 分别使用约束匹配的 gizmo；多 direct joint 在面板显式选择 | 已修 |
 | Unitree meshes/meshes | 只在双层文件不存在、单层文件存在时，在内存中去掉重复前缀；不改源文件 | 已修 |
+
+## 可验收需求台账
+
+按用户提出的独立产品或工程结果拆分为 16 项，不把分析过程重复计数：
+
+| # | 可验收结果 | 状态 | 证据或剩余边界 |
+|---:|---|---|---|
+| 1 | editor camera far plane 放宽 | 完成 | camera hint 最低 `200 * extent` |
+| 2 | Entity Plane 是 MuJoCo world 静态碰撞地面 | 完成 | body 0；添加机器人后不倾斜 |
+| 3 | Plane 可在 viewport 点击选中并高亮 | 完成 | node/source/raycast 共用非零稳定 object ID |
+| 4 | Plane 可用 transform gizmo 移动/旋转 | 完成 | `SetPose` 写回 MjSpec，重建后保持 |
+| 5 | Plane 可编辑长宽并支持 Undo/Redo/保存 | 完成 | 直接更新 compiled model 和 spec，不为每次拖动 compile |
+| 6 | 加载不再是全屏阻塞页 | 完成 | 单 worker；旧 viewport 保持；中央 Loading widget |
+| 7 | 加载显示动作、文件、耗时和排队数 | 完成 | 不伪造百分比 |
+| 8 | 显示真实 parser/mesh/compiler/GPU 阶段进度 | 部分 | MuJoCo binding 无阶段回调；需跨层显式 job telemetry |
+| 9 | Unsaved changes 对话框居中且按钮不裁字 | 完成（代码） | CPU/UI 测试通过，GPU gallery 仍待可用环境目视 |
+| 10 | 错误文本可复制 | 完成 | 文件 modal、资源修复、Inspector、Control message |
+| 11 | Unitree `meshes/meshes` 窄兼容 | 完成 | 仅磁盘证明短路径存在时内存修复 |
+| 12 | 单 hinge/slide/ball/free link 的 viewport DOF gizmo | 完成 | MuJoCo 动态测试覆盖 hinge/slide/ball；free 沿用 SetPose |
+| 13 | 多直接关节不猜测并可选 gizmo 目标 | 完成 | Joints 面板 `Use gizmo`，选择按 structure generation 失效 |
+| 14 | 检查 camera/light/scene/UI 的 O(N²) 与高基数热点 | 完成 | 修复项和剩余 GPU 乘法风险见性能章节 |
+| 15 | 直接接口与 batch 接口有真实扩展点 | 完成（当前范围） | debug plural batch、SceneFrame arrays、原子 `SetQposBatch`/remote |
+| 16 | 4096 机器人专用 batch renderer / culling / LOD | 明确延期 | 用户说明当前不做；等真实规模和 GPU profile 触发 |
+
+另有一个非上述 16 项的新架构工作：topology `ModelEditBatch` 尚未实现。当前单次 add/remove/undo 仍各 compile
+一次；它不影响本轮 Plane 正确性，但多结构操作仍缺少“一批 spec 改动只 compile 一次”的事务语义。
 
 ## meshdir：错误、兼容输入还是合法输入
 
@@ -102,6 +134,10 @@ G1 的 29 个 mesh 自身含 802,195 个 mesh BVH 节点；50 个 mesh geom 复�
 展开为约 1,450,066 条调试记录。BODYBVH/MESHBVH 默认关闭，却在每次 SceneSource 重建时无条件生成这些
 数组。本轮新增的 `prepare_frame(FrameNeeds)` 延迟路径只在 UI 确实打开 BVH flag 时物化，第三方旧 adapter
 不实现该可选 hook 也继续工作。
+
+二次回归修复后用同一 G1 文件复测：初次 adapter load 148.3 ms，Add Plane 118.8 ms，Undo 99.2 ms。
+Plane 长宽拖动不走 topology recompile，而是同步更新 compiled `geom_size` 与 editable spec，并调用一次
+`mj_setConst`/`mj_forward`；因此连续尺寸编辑不会重复支付 parser/compiler 成本。
 
 剩余事实：用户主动打开 G1 的 mesh BVH 时，完整诊断数据仍然很大，可能发生一次明显停顿和较大内存占用。
 长期方案应把 BVH 表示改为“共享 mesh tree + instance transform”或按所选 depth/budget 生成，而不是恢复
@@ -209,9 +245,12 @@ session.submit(SetSceneCamera(camera_id, view))
 ```python
 layer.arrows("robot-velocities", starts, ends, color)
 publisher.publish_frame(frame_with_all_robot_transforms)
+session.submit(SetQposBatch(indices, quaternion))
 ```
 
 batch 应有一个整体 retained ID；需要独立删除/寿命时才拆分，不应为每条记录生成无意义 numeric ID。
+`SetQposBatch` 先整体验证长度、整数索引、唯一性、范围和有限值，再一次写入并 forward；remote adapter 保留
+同样的原子命令边界。它当前直接服务 ball joint gizmo，不是为未来假设场景预留的空接口。
 
 ### 仍缺的 batch/transaction
 
@@ -251,8 +290,7 @@ Euler 文档和 RenderBackend contract 等问题；多数已通过独立动态�
 
 1. 在可用 GPU/EGL 环境完成现有 Forge/WGPU gallery 验收，不为假设规模新增渲染架构。
 2. 讨论结构编辑的后台 Session job 与“一次 compile”的 spec transaction；确认交互和撤销语义后再实现。
-3. 设计 link DOF gizmo：单 hinge/slide 可直接启用；多 joint body 先显示 chooser；ball/free 必须原子提交
-   quaternion/6-DOF，不把多个 scalar slider 拼成不一致中间状态。
+3. 在可用 GPU/EGL 环境目视验收 link DOF gizmo 和 Plane outline；CPU/MuJoCo 交互与约束写回已经完成。
 4. 只有在普通编辑场景实际复现文本过载时，再为 label/contact/tendon text 增加 selected-only、viewport
    culling 或预算。
 

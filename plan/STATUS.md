@@ -16,7 +16,8 @@ Inspector authoring 都视为完成。
 transform、资源目录、缺失资源重定位和批量路径修复、MjSpec 空间拓扑编辑、完整 MJCF
 source 编辑、Camera/Light helper、选中相机预览、四类模型级结构化组件编辑和大型组合
 场景性能基线已经完成。固定 body/site transform、常用 primitive 尺寸、joint
-axis/range/damping/stiffness、geom contact properties、model-local material 与 PNG 2D
+axis/range/damping/stiffness、body inertial/mass/gravcomp/mocap/sleep、geom contact/solver/
+surface/mass/group/fluid properties、model-local material 与 PNG 2D
 texture import 也已有支持 Undo/Redo 的结构化入口。编辑器相机与模型相机状态独立，Settings
 使用居中模态面板，界面支持持久化的英文与简体中文切换以及 Noto Sans SC 自动下载与 CJK
 字体回退。相机预览支持
@@ -31,7 +32,7 @@ deg/rad；选择偏好可以跨会话保存。Topology batch 可在一次 compil
 
 尚未结构化的主要范围如下；它们仍可通过 **Edit MJCF Source** 完成，不代表已有同等级 UI：
 
-- body inertial/mass、geom `solref`/`solimp`/group 和 resource-backed geom 创建；
+- resource-backed geom 创建；
 - 更多 actuator/sensor subtype、keyframe authoring、contact pair/exclude、default class 与 option/solver；
 - cube/skybox 图片导入（已有 cube/skybox 选择、渲染和 MJCF round trip）；
 - 面向真实多选工作流的通用 pose/control/light/material batch commands。

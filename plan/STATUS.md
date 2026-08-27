@@ -1,27 +1,43 @@
 # 未完成项统计
 
-更新日期：2026-08-25
+更新日期：2026-08-27
 
 P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。按
 [ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 22 项：P2 编辑器与生产化 10 项、
-wgpu 上游改进 3 项、P3 延后能力 9 项。
+wgpu 上游改进 3 项、P3 延后能力 9 项。编辑器基础工作流已经可用，但结构化 MuJoCo
+schema 仍有明确的后续范围；不能因为完整 MJCF source popup 可以兜底，就把每种模型对象的
+Inspector authoring 都视为完成。
 
 ## P2：编辑器与生产化，10 项
 
-### 编辑器交互，完成
+### 编辑器交互，可用基线完成；结构化 authoring 继续迭代
 
 场景文件、Entity 生命周期、undo/redo、authored overlay、运行时 MJCF/URDF 组合、模型根
 transform、资源目录、缺失资源重定位和批量路径修复、MjSpec 空间拓扑编辑、完整 MJCF
 source 编辑、Camera/Light helper、选中相机预览、四类模型级结构化组件编辑和大型组合
-场景性能基线已经完成。编辑器相机与模型相机状态独立，Settings 使用居中模态面板，界面
-支持持久化的英文与简体中文切换以及 Noto Sans SC 自动下载与 CJK 字体回退。相机预览支持
+场景性能基线已经完成。固定 body/site transform、常用 primitive 尺寸、joint
+axis/range/damping/stiffness、geom contact properties、model-local material 与 PNG 2D
+texture import 也已有支持 Undo/Redo 的结构化入口。编辑器相机与模型相机状态独立，Settings
+使用居中模态面板，界面支持持久化的英文与简体中文切换以及 Noto Sans SC 自动下载与 CJK
+字体回退。相机预览支持
 固定视角或锁定实体并实时跟随；Camera 和 Light 的 Gizmo 在仿真运行时默认锁定。MJCF 导出
-复制文件资源、写入相对路径、重新编译
-并验证移动后的完整目录。模型根 transform 在拖动结束时只编译一次，无变化的 transform
+复制文件资源、写入相对路径、重新编译并验证移动后的完整目录。模型根 transform 在拖动结束时
+只编译一次，无变化的 transform
 与组件 Apply 跳过重编译。OpenGL 与 wgpu 共用同一套交互、公开接口和示例。
 
-默认基线为 8 个模型、每个 64 bodies：添加模型中位数 16.00 ms，提交模型 transform
-25.06 ms，添加组件 35.54 ms，更新组件 27.65 ms。结果写入
+joint gizmo 支持 hinge/slide/ball/free、多 joint 选择、limit visualization、绝对/相对精确输入和
+deg/rad；选择偏好可以跨会话保存。Topology batch 可在一次 compile 中引用本批新建元素并按稳定
+语义身份恢复选择。结构刷新已消除已知的 O(B²) body walk 和 O(E×M) model ownership scan。
+
+尚未结构化的主要范围如下；它们仍可通过 **Edit MJCF Source** 完成，不代表已有同等级 UI：
+
+- body inertial/mass、geom `solref`/`solimp`/group 和 resource-backed geom 创建；
+- 更多 actuator/sensor subtype、keyframe authoring、contact pair/exclude、default class 与 option/solver；
+- cube/skybox 图片导入（已有 cube/skybox 选择、渲染和 MJCF round trip）；
+- 面向真实多选工作流的通用 pose/control/light/material batch commands。
+
+默认基线为 8 个模型、每个 64 bodies：添加模型中位数 14.81 ms，结构节点构建 3.04 ms，提交模型
+transform 24.80 ms，添加组件 28.14 ms，更新组件 27.14 ms。结果写入
 `output/editor-performance.json`。
 
 ### 真实第二物理后端，5 项
@@ -62,6 +78,22 @@ wgpu-py 上游提供或修复公开 API：
 这些项目属于后端能力增强。当前 Metal/Vulkan 的 Renderer API、Viewer、render flags、
 debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通过回归测试。
 
+## 非阻塞设计债与触发项
+
+以下内容不是当前支持输入下的已复现 bug，也不适合为了形式统一立即重构：
+
+- `Renderer.enable_*_rendering()` / `disable_*_rendering()` 刻意兼容 `mujoco.Renderer`；内部 feature
+  switch 使用 `set_flag(flag, bool)`，debug output 使用 `set_debug_view()`，不改成冲突的 bool setter。
+- `Scene` 的修改失败仍混用 bool、`KeyError` 与 `None`；需要公开 API 兼容策略后再统一，不能机械改返回值。
+- `SceneAdapterBase` 与 `SceneAdapter` Protocol 表面较宽且手工镜像；真实第三方 capability 漂移再次出现时，
+  再按 simulation/authoring/composition service 拆分比预先制造大量小接口更稳妥。
+- Forge/WGPU 仍有 light scheduling、cascade、tendon/reflection 等 Python 算法或常量的镜像副本；应由实际
+  parity drift 驱动共享，不能强求两套 GPU pipeline 源码同构。
+- Remote snapshot 使用 pickle，明确只适合可信本机/局域网；若要接收不可信网络或下载文件，必须迁移到
+  非可执行 schema，而不是把固定 authkey 当安全边界。
+- 大型 mesh BVH 诊断、全 instance buffer 上传、缺少 frustum culling/LOD/indirect draw 和多 point-light
+  shadow face 重绘都保留规模触发条件；当前没有 light metadata O(L²)。
+
 ## P3：延后能力，9 项
 
 - SDF iteration visualization：3 项
@@ -72,10 +104,10 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | Fast 534 passed；Integration 44 passed |
-| MuJoCo physics | 217 passed，727 deselected |
-| Forge GPU | 216 passed，12 个后端专用测试 skipped |
-| wgpu GPU | 175 passed，7 skipped |
+| CPU 与静态检查 | Fast 609 passed；Integration 67 passed |
+| MuJoCo physics（隔离 GPU） | 204 passed，1 条既有 flex warning |
+| Forge GPU | 既有完整基线 216 passed；本机本轮 EGL 初始化不可用，未重复计数 |
+| wgpu GPU | 202 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |
 | 反向回归 | 50/50 mutation gates |
 | 源码任务标记 | 0 个 TODO、FIXME 或 HACK |

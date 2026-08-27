@@ -203,6 +203,11 @@ P2 按以下顺序执行：
 - 居中模态 Settings、英文与简体中文切换和 CJK 字体回退
 - OpenGL 与 wgpu 的多 viewport texture、相机预览和场景 helper 对齐
 - actuator、tendon、sensor、equality 的模型级结构化属性面板、引用选择、MjSpec 校验与文档恢复
+- fixed body/site transform、常用 primitive 尺寸与 joint axis/range/damping/stiffness 结构化编辑
+- geom friction/contact dimension/collision masks/priority/margin/gap/solver mix 结构化编辑
+- model-local material 创建、复制、改绑与 PNG 2D texture 导入
+- joint gizmo 的多 joint 选择、range visualization、绝对/相对精确输入和 deg/rad 偏好持久化
+- topology batch 的批内引用、稳定选择恢复与结构刷新 O(B²)/O(E×M) 扫描消除
 - 模型根 transform 拖动提交合并、无变化编辑快速路径和大型组合场景编辑性能基线
 - 便携 MJCF 导出、资源相对路径、移动后重新编译和不可表示语义诊断
 - 分层测试说明、生成式 API 参考和基础到进阶的可运行示例
@@ -218,9 +223,18 @@ make undo-redo
 make model-composition
 make workspace-edit
 make editor-performance
+make primitive-authoring BACKEND=wgpu
+make material-authoring BACKEND=wgpu
+make contact-authoring BACKEND=wgpu
+make joint-gizmo BACKEND=wgpu
 make scene-entities BACKEND=forge
 make scene-entities BACKEND=wgpu
 ```
+
+结构化 Inspector 继续按实际工作流扩展。当前未覆盖的 body inertial/mass、geom
+`solref`/`solimp`、resource-backed geom 创建、更多 component subtype、keyframe、contact
+pair/exclude、default class 和 option/solver 仍由完整 MJCF source 编辑入口承担；不能将 source
+fallback 等同于这些字段已有专用 UI。
 
 ### P2.2 真实第二物理后端
 

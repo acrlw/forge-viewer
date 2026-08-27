@@ -227,12 +227,13 @@ make primitive-authoring BACKEND=wgpu
 make material-authoring BACKEND=wgpu
 make contact-authoring BACKEND=wgpu
 make body-authoring BACKEND=wgpu
+make resource-authoring BACKEND=wgpu
 make joint-gizmo BACKEND=wgpu
 make scene-entities BACKEND=forge
 make scene-entities BACKEND=wgpu
 ```
 
-结构化 Inspector 继续按实际工作流扩展。当前未覆盖的 resource-backed geom 创建、更多
+结构化 Inspector 继续按实际工作流扩展。当前未覆盖的详细 mesh/hfield asset 参数、更多
 component subtype、keyframe、contact
 pair/exclude、default class 和 option/solver 仍由完整 MJCF source 编辑入口承担；不能将 source
 fallback 等同于这些字段已有专用 UI。

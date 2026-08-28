@@ -240,7 +240,7 @@ make scene-entities BACKEND=wgpu
 
 结构化 Inspector 继续按实际工作流扩展。mesh/hfield metadata、非插件 component catalog、
 keyframe、contact pair/exclude、default class 和 option/solver 已有专用 UI。剩余范围主要是
-custom numeric/text/tuple、flex/skin/deformable authoring、bulk asset payload，以及
+flex/skin/deformable authoring、bulk asset payload，以及
 通用 pose/control/light/material 多选批量编辑。MJCF source popup 编辑 MjSpec 规范化文本，不保留
 原始 include 组织、注释或格式。
 

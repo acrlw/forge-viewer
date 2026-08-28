@@ -33,7 +33,7 @@ deg/rad；选择偏好可以跨会话保存。Topology batch 可在一次 compil
 尚未结构化的主要范围如下；规范化的 **Edit MJCF Source** 可以表达其中一部分，但不代表已有
 同等级 UI，也不保留原始 include 组织、注释或格式：
 
-- custom numeric/text/tuple、flex/skin/deformable authoring 和 bulk asset payload；
+- flex/skin/deformable authoring 和 bulk asset payload；
 - 面向真实多选工作流的通用 pose/control/light/material batch commands。
 
 默认基线为 8 个模型、每个 64 bodies：添加模型中位数 14.81 ms，结构节点构建 3.04 ms，提交模型
@@ -105,8 +105,8 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | Fast 612 passed；Integration 67 passed |
-| MuJoCo physics（隔离 GPU） | 215 passed，1 条既有 flex warning |
+| CPU 与静态检查 | Fast 613 passed；Integration 67 passed |
+| MuJoCo physics（隔离 GPU） | 216 passed，1 条既有 flex warning |
 | Forge GPU | 既有完整基线 216 passed；本机本轮 EGL 初始化不可用，未重复计数 |
 | wgpu GPU | 202 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |

@@ -206,6 +206,7 @@ P2 按以下顺序执行：
 - fixed body/site transform、常用 primitive 尺寸与 joint axis/range/damping/stiffness 结构化编辑
 - geom friction/contact dimension/collision masks/priority/margin/gap/solver mix 结构化编辑
 - model-local material 创建、复制、改绑与 PNG 2D texture 导入
+- 独立 Keyframes 窗口的当前状态捕获、命名、时间元数据、加载和删除
 - joint gizmo 的多 joint 选择、range visualization、绝对/相对精确输入和 deg/rad 偏好持久化
 - topology batch 的批内引用、稳定选择恢复与结构刷新 O(B²)/O(E×M) 扫描消除
 - 模型根 transform 拖动提交合并、无变化编辑快速路径和大型组合场景编辑性能基线
@@ -231,18 +232,18 @@ make resource-authoring BACKEND=wgpu
 make joint-site-authoring BACKEND=wgpu
 make model-component-authoring BACKEND=wgpu
 make keyframe-authoring BACKEND=wgpu
-make model-settings-authoring BACKEND=wgpu
 make batch-editing BACKEND=wgpu
 make joint-gizmo BACKEND=wgpu
 make scene-entities BACKEND=forge
 make scene-entities BACKEND=wgpu
 ```
 
-结构化 Inspector 继续按实际工作流扩展。mesh/hfield metadata、非插件 component catalog、
-keyframe、contact pair/exclude、default class 和 option/solver 已有专用 UI。剩余范围主要是
-flex/skin/deformable authoring、bulk asset payload，以及
-通用 pose/control/light/material 多选批量编辑。MJCF source popup 编辑 MjSpec 规范化文本，不保留
-原始 include 组织、注释或格式。
+结构化 Inspector 按真实高频工作流继续扩展。核心范围保留 body/joint/geom/site、
+material 替换、contact/actuator/sensor/tendon/equality、file-backed asset 生命周期和
+Keyframes 窗口。compiler/option/visual、default class、custom array/tuple、deformable 声明、
+PBR texture-role layer 和 bulk asset payload 转为 source-owned：继续加载、渲染和保真，
+不在常驻 UI 里承担低频手工编辑成本。MJCF source popup 编辑 MjSpec 规范化文本，
+不保留原始 include 组织、注释或格式。
 
 ### P2.2 真实第二物理后端
 

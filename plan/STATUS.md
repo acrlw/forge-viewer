@@ -1,12 +1,11 @@
 # 未完成项统计
 
-更新日期：2026-08-27
+更新日期：2026-08-28
 
-P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。按
-[ROADMAP.md](ROADMAP.md) 的验收条目统计，后续共有 22 项：P2 编辑器与生产化 10 项、
-wgpu 上游改进 3 项、P3 延后能力 9 项。编辑器基础工作流已经可用，但结构化 MuJoCo
-schema 仍有明确的后续范围；不能因为完整 MJCF source popup 可以兜底，就把每种模型对象的
-Inspector authoring 都视为完成。
+P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。后续固定里程碑
+包括真实第二物理后端 5 项、平台与发布 5 项、wgpu 上游改进 3 项和 P3 延后能力 12 项。
+编辑器基础工作流已经可用，但结构化 MuJoCo schema 仍有明确的迭代范围；这些工作流型缺口
+单独列出，不再混入一个会因交叉依赖而失真的总数。
 
 ## P2：编辑器与生产化，10 项
 
@@ -31,10 +30,10 @@ joint gizmo 支持 hinge/slide/ball/free、多 joint 选择、limit visualizatio
 deg/rad；选择偏好可以跨会话保存。Topology batch 可在一次 compile 中引用本批新建元素并按稳定
 语义身份恢复选择。结构刷新已消除已知的 O(B²) body walk 和 O(E×M) model ownership scan。
 
-尚未结构化的主要范围如下；它们仍可通过 **Edit MJCF Source** 完成，不代表已有同等级 UI：
+尚未结构化的主要范围如下；规范化的 **Edit MJCF Source** 可以表达其中一部分，但不代表已有
+同等级 UI，也不保留原始 include 组织、注释或格式：
 
-- mesh scale/reference pose、height-field size 等详细 asset 参数；
-- 更多 actuator/sensor subtype、keyframe authoring、contact pair/exclude、default class 与 option/solver；
+- custom numeric/text/tuple、flex/skin/deformable authoring 和 bulk asset payload；
 - 面向真实多选工作流的通用 pose/control/light/material batch commands。
 
 默认基线为 8 个模型、每个 64 bodies：添加模型中位数 14.81 ms，结构节点构建 3.04 ms，提交模型
@@ -95,9 +94,10 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 - 大型 mesh BVH 诊断、全 instance buffer 上传、缺少 frustum culling/LOD/indirect draw 和多 point-light
   shadow face 重绘都保留规模触发条件；当前没有 light metadata O(L²)。
 
-## P3：延后能力，9 项
+## P3：延后能力，12 项
 
 - SDF iteration visualization：3 项
+- 外部模型资源完整性：3 项
 - Live View 增强：4 项
 - PBR 与原生 renderer core 评估：2 项
 
@@ -105,8 +105,8 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | Fast 609 passed；Integration 67 passed |
-| MuJoCo physics（隔离 GPU） | 204 passed，1 条既有 flex warning |
+| CPU 与静态检查 | Fast 612 passed；Integration 67 passed |
+| MuJoCo physics（隔离 GPU） | 215 passed，1 条既有 flex warning |
 | Forge GPU | 既有完整基线 216 passed；本机本轮 EGL 初始化不可用，未重复计数 |
 | wgpu GPU | 202 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |

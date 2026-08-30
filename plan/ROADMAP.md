@@ -12,7 +12,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 ## 当前状态
 
-2026-08-26，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
+2026-08-31，P0、P1 和 wgpu 的 Metal/Vulkan 集成已完成。当前未完成项统计见
 [STATUS.md](STATUS.md)。SDF iteration visualization 排入 P3。
 
 | 范围 | 状态 | 验收结果 |
@@ -30,10 +30,10 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 
 | 项目 | 结果 |
 |---|---|
-| 核心质量 | Fast 534 passed；Integration 44 passed |
-| Forge GPU 回归 | `make gpu`：216 passed，12 个后端专用测试 skipped |
-| wgpu GPU 回归 | `make gpu-wgpu`：175 passed，7 skipped |
-| MuJoCo physics | 217 passed，727 deselected；严格审计与 conformance 通过 |
+| 核心质量 | Fast 726 passed；Integration 71 passed |
+| Forge GPU 回归 | `make gpu`：265 passed，14 个后端专用测试 skipped |
+| wgpu GPU 回归 | `make gpu-wgpu`：225 passed，7 skipped |
+| MuJoCo physics | 335 passed，977 deselected；严格审计与 conformance 通过 |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个真实 GPU 测试；200 次构造销毁 |
 | Renderer RGB | 对 MuJoCo 参考图 MAE 1.4295 |
 | Renderer depth | 误差 p95 0.00037 m |

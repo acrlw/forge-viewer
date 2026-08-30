@@ -1,6 +1,6 @@
 # 未完成项统计
 
-更新日期：2026-08-28
+更新日期：2026-08-31
 
 P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。后续固定里程碑
 包括真实第二物理后端 5 项、平台与发布 5 项、wgpu 上游改进 3 项和 P3 延后能力 12 项。
@@ -19,7 +19,7 @@ axis/range/damping/stiffness、body inertial/mass/gravcomp/mocap/sleep、geom co
 surface/mass/group/fluid properties、primitive/mesh/hfield 类型切换与导入、model-local material
 与 PNG 2D/cube/skybox
 texture import 也已有支持 Undo/Redo 的结构化入口。编辑器相机与模型相机状态独立，Settings
-使用居中模态面板，界面支持持久化的英文与简体中文切换以及 Noto Sans SC 自动下载与 CJK
+使用右侧可停靠面板，界面支持持久化的英文与简体中文切换以及 Noto Sans SC 自动下载与 CJK
 字体回退。相机预览支持
 固定视角或锁定实体并实时跟随；Camera 和 Light 的 Gizmo 在仿真运行时默认锁定。MJCF 导出
 复制文件资源、写入相对路径、重新编译并验证移动后的完整目录。模型根 transform 在拖动结束时
@@ -105,10 +105,10 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 
 | 范围 | 结果 |
 |---|---:|
-| CPU 与静态检查 | Fast 613 passed；Integration 67 passed |
-| MuJoCo physics（隔离 GPU） | 216 passed，1 条既有 flex warning |
-| Forge GPU | 既有完整基线 216 passed；本机本轮 EGL 初始化不可用，未重复计数 |
-| wgpu GPU | 202 passed，7 skipped |
+| CPU 与静态检查 | Fast 726 passed；Integration 71 passed |
+| MuJoCo physics（隔离 GPU） | 335 passed，1 条既有 flex warning |
+| Forge GPU | 265 passed，14 个后端专用测试 skipped |
+| wgpu GPU | 225 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |
 | 反向回归 | 50/50 mutation gates |
 | 源码任务标记 | 0 个 TODO、FIXME 或 HACK |

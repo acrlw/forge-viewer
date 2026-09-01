@@ -1,4 +1,7 @@
-# wgpu Backend Completion Plan
+# wgpu Backend Completion Record
+
+Status: completed historical record. Current user-facing behavior is documented in
+[`docs/WGPU_BACKEND_REPORT.md`](../docs/WGPU_BACKEND_REPORT.md).
 
 This document records the implementation milestones for the wgpu backend. The backend is
 integrated and supports the public Renderer API, the interactive viewer, render passes,

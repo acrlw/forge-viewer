@@ -1,6 +1,7 @@
-# Mojive UI 交互重构落地方案
+# Mojive UI 交互重构落地记录
 
-状态：M1–M18、D1–D8 已落地并生成验收图；CPU、physics、OpenGL 与 WGPU 回归已通过，等待产品视觉确认
+状态：历史实现记录。M1–M18、D1–D8 已落地；当前 UI 行为以代码、用户指南和 `make ui-gallery`
+产物为准。本文保留当时的设计约束和阶段记录，不作为现行操作手册。
 概念设计来源：`design/index.html` 的 M1–M18 与 D1–D8
 绘制可行性探针：`design/tools/render_ui_feasibility.py`
 

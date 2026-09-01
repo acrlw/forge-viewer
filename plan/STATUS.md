@@ -4,7 +4,7 @@
 
 Mojive 已具备可用的 MuJoCo 查看、编辑、离屏渲染、远程查看和录制工作流。OpenGL 与 wgpu
 共用 scene contracts、Session、UI 和交互层；差异限制通过 backend capabilities 报告。项目仍是
-0.1.x 开发阶段，当前重点是编辑器完整性、发布工程和第二个真实物理适配器，而不是继续扩张基础
+0.1.x 开发阶段，当前重点是编辑器完整性、可复现性能基线和第二个真实物理适配器，而不是继续扩张基础
 viewer 功能。
 
 ## 已支持的基线
@@ -53,15 +53,16 @@ include、注释或格式时，继续编辑原始外部文件。
 
 ### 第二物理适配器
 
-`toy` 用于协议和 UI conformance，不代表第二个生产物理引擎。`newton` 已进入 backend discovery
-矩阵，但适配器尚未实现。恢复该工作时需要先确认稳定 Python binding，再完成 scene source/frame、
-pause/step/reset、pose write-back、perturbation、contact/debug draw 和 conformance。
+`toy` 用于协议和 UI conformance，不代表第二个生产物理引擎。候选尚未确定。Box3D 的 3D 刚体、
+关节、碰撞查询、事件和 MIT/C17 core 与 adapter 目标匹配，但当前官方 v0.1.0 明确属于 alpha，且没有
+官方 Python binding；适合先做独立 C-ABI spike，不适合现在承诺为生产适配器。Newton 保留为候选，
+选择前统一比较 binding 所有权、模型输入、调试数据、平台和 API 稳定性。
 
 ### 平台与发布
 
 - Windows D3D12 wgpu 的安装、窗口和视觉回归仍需真实机器验证；
-- 支持平台的 clean-environment wheel 构建和 GPU smoke capture 尚未形成发布流水线；
-- 平台兼容矩阵和可复现性能基线尚未发布。
+- 当前是个人开发项目，不把 wheel 构建和发布流水线列为近期工作；正式发布前再恢复；
+- 平台兼容矩阵仍需实机验证；Renderer 性能基线通过 `make renderer-benchmark` 维护。
 
 ### 远程边界
 

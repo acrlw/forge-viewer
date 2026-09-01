@@ -45,7 +45,7 @@ authoring visual target。
 
 验收：`make deformables`、portable MJCF round trip 和 model corpus。
 
-## R2：发布工程
+## R2：平台验证（正式发布前）
 
 ### R2.1 平台矩阵
 
@@ -56,9 +56,10 @@ authoring visual target。
 每个平台记录 Python、driver、window path、offscreen path、HiDPI、capture 和已知限制。没有真实
 机器结果的平台不能标记为 validated。
 
-### R2.2 分发
+### R2.2 分发（延后）
 
-- 构建 wheel 并在 clean environment 安装 `core`、`mujoco`、`wgpu` 组合；
+- 当前个人开发阶段不构建 wheel；确定正式发布后再恢复本节；
+- 届时构建 wheel 并在 clean environment 安装 `core`、`mujoco`、`wgpu` 组合；
 - 验证 bundled assets、GLSL/WGSL resources、CLI entry point 和首次启动；
 - 建立最小 GPU smoke capture，并将日志和产物归档；
 - 发布版本兼容策略和格式迁移策略。
@@ -70,7 +71,7 @@ authoring visual target。
 
 ToyPhysics 继续作为协议示例。生产适配器按以下顺序推进：
 
-1. 评估 Newton 等候选的稳定 Python binding、许可、平台和模型输入；
+1. 评估 Box3D、Newton 等候选的 binding、许可、平台、模型输入和 API 稳定性；
 2. 发布稳定 `SceneSource` 与按需 `SceneFrame`；
 3. 实现 pause、step、reset、pose write-back 和 perturbation；
 4. 接入 contact、sensor 和 debug draw；

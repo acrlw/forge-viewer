@@ -7,7 +7,7 @@ diagnostic overlays, and tooling. Current validation is summarized in
 
 ## Principles
 
-1. **Parallel pass structure.** `render/webgpu/` mirrors `render/forge/` structure: a
+1. **Parallel pass structure.** `render/webgpu/` mirrors `render/opengl/` structure: a
    `passes/` package (one module per pass, same names), `shaders/*.wgsl` mirroring the
    GLSL files, the same store class conventions (`sync/get/release`), the same
    PASS_ORDER. Backend-specific limits are exposed through `BackendCaps.notes`.
@@ -24,19 +24,19 @@ diagnostic overlays, and tooling. Current validation is summarized in
 4. **Capability reporting.** `BackendCaps` and `_SUPPORTED_FLAGS` reflect implemented,
    tested behavior.
 5. **Milestone verification.** Each milestone includes focused WGPU tests, the default
-   CPU suite, Forge GPU regressions, formatting, and lint checks.
+   CPU suite, OpenGL GPU regressions, formatting, and lint checks.
 
 ## Milestones
 
 ### M1 — Backend-parameterized test infrastructure — done (42847a1)
-- `tests/gpu/conftest.py`: `make_backend(...)` factory honoring `FORGE_VIEWER_BACKEND`;
-  `backend_name` fixture; GL-internals test files (test_forge_core, test_id_outline,
+- `tests/gpu/conftest.py`: `make_backend(...)` factory honoring `MOJIVE_BACKEND`;
+  `backend_name` fixture; GL-internals test files (test_opengl_core, test_id_outline,
   test_debugdraw_gpu, and the GL-specific parts of test_pipeline) get an explicit
-  forge-only skip guard.
+  opengl-only skip guard.
 - `tools/_harness.py`: `OffscreenHarness` backend switch (mirrors
   `renderer._select_backend`).
 - Makefile: `gpu-wgpu` target — per-file loop over the backend-neutral subset with
-  `FORGE_VIEWER_BACKEND=wgpu`.
+  `MOJIVE_BACKEND=wgpu`.
 - Acceptance: `make gpu-wgpu` runs, wgpu-unsupported cases skip on caps; `make gpu`
   output identical to before.
 
@@ -90,12 +90,12 @@ diagnostic overlays, and tooling. Current validation is summarized in
 - Acceptance: tendon cases of `test_pipeline.py` under wgpu.
 
 ### M7 — Debug draw + text + overlays (largest CPU+GPU chunk) — done (ce270bd)
-- Extract shared `DebugDraw` publisher out of `ForgeBackend` (labels, frames, bvh,
+- Extract shared `DebugDraw` publisher out of `OpenGLBackend` (labels, frames, bvh,
   contacts, joints, COM, inertia, actuators, rangefinder, constraint, flex).
 - `passes/debug.py` + the six WGSL families (`debug_line/point/solid/sector/stroke/
   drag_link`, all `@builtin(vertex_index)` expansion), occlusion modes
   DEPTH/ALWAYS/GHOST (two-pass).
-- Split `render/forge/text.py`: atlas building → shared; new wgpu glyph draw
+- Split `render/opengl/text.py`: atlas building → shared; new wgpu glyph draw
   (`debug_text.wgsl`); `configure_text` on `WgpuBackend`.
 - Flags: JOINT/COM/INERTIA/ACTUATOR/CONTACT*/BVH/CAMERA/LIGHT/RANGEFINDER/CONSTRAINT/
   FLEX*; `set_label_mode`/`set_frame_mode`/`set_bvh_depth` become real.
@@ -117,14 +117,14 @@ diagnostic overlays, and tooling. Current validation is summarized in
   (`cmd_lists_count`) is handled by a version-guarded subclass in the project.
 - `ViewportImage`: carries a backend payload; `_draw_viewport` binds the wgpu texture
   through the imgui renderer instead of `ImTextureRef(gl_id)`.
-- `composition._compose`: honor `FORGE_VIEWER_BACKEND`; `doctor`/`backends` reporting.
+- `composition._compose`: honor `MOJIVE_BACKEND`; `doctor`/`backends` reporting.
 - HiDPI: the GL and wgpu windows share point-to-pixel conversion and explicit UI scaling.
-- Acceptance: `FORGE_VIEWER_BACKEND=wgpu make viewer` opens the full UI; window-stack
+- Acceptance: `MOJIVE_BACKEND=wgpu make viewer` opens the full UI; window-stack
   tests that are backend-neutral (open, read_frame, edit→pixels) pass under wgpu;
   `make doctor` reports the wgpu path accurately.
 
 ### M10 — Finalization — done
-- MSAA flag semantics aligned with forge (samples fixed at construction — verify forge
+- MSAA flag semantics aligned with opengl (samples fixed at construction — verify opengl
   behavior first, then match).
 - `id_msaa`/caps/notes sweep; README, `docs/RENDERER.md`, and `plan/ROADMAP.md` updates.
 - Full verification matrix: default suite, per-file GPU loop on both backends,

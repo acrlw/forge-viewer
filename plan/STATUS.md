@@ -2,7 +2,7 @@
 
 更新日期：2026-08-31
 
-P0、P1、Forge OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。后续固定里程碑
+P0、P1、OpenGL 后端和 wgpu Metal/Vulkan 后端已经达到当前验收门槛。后续固定里程碑
 包括真实第二物理后端 5 项、平台与发布 5 项、wgpu 上游改进 3 项和 P3 延后能力 12 项。
 编辑器基础工作流已经可用，但结构化 MuJoCo schema 仍有明确的迭代范围；这些工作流型缺口
 单独列出，不再混入一个会因交叉依赖而失真的总数。
@@ -87,7 +87,7 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 - `Scene` 的修改失败仍混用 bool、`KeyError` 与 `None`；需要公开 API 兼容策略后再统一，不能机械改返回值。
 - `SceneAdapterBase` 与 `SceneAdapter` Protocol 表面较宽且手工镜像；真实第三方 capability 漂移再次出现时，
   再按 simulation/authoring/composition service 拆分比预先制造大量小接口更稳妥。
-- Forge/WGPU 仍有 light scheduling、cascade、tendon/reflection 等 Python 算法或常量的镜像副本；应由实际
+- OpenGL/WGPU 仍有 light scheduling、cascade、tendon/reflection 等 Python 算法或常量的镜像副本；应由实际
   parity drift 驱动共享，不能强求两套 GPU pipeline 源码同构。
 - Remote snapshot 使用 pickle，明确只适合可信本机/局域网；若要接收不可信网络或下载文件，必须迁移到
   非可执行 schema，而不是把固定 authkey 当安全边界。
@@ -107,15 +107,15 @@ debug views、阴影、反射、outline、tendon、debug draw 和 gizmo 已通�
 |---|---:|
 | CPU 与静态检查 | Fast 726 passed；Integration 71 passed |
 | MuJoCo physics（隔离 GPU） | 335 passed，1 条既有 flex warning |
-| Forge GPU | 265 passed，14 个后端专用测试 skipped |
+| OpenGL GPU | 265 passed，14 个后端专用测试 skipped |
 | wgpu GPU | 225 passed，7 skipped |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个 GPU 测试 |
 | 反向回归 | 50/50 mutation gates |
 | 源码任务标记 | 0 个 TODO、FIXME 或 HACK |
 
 MuJoCo 严格可视化审计、deformables adapter conformance、便携 MJCF round trip、严格文档
-构建和示例程序均通过。独立 Forge 与 wgpu GPU 回归均通过。
+构建和示例程序均通过。独立 OpenGL 与 wgpu GPU 回归均通过。
 
-wgpu 的 7 个 skip 覆盖 Forge 内部状态、CPU pass timing 表和 GL error state 等后端实现
+wgpu 的 7 个 skip 覆盖 OpenGL 内部状态、CPU pass timing 表和 GL error state 等后端实现
 细节。GPU pass timing 已由 wgpu timestamp query 独立覆盖；这些 skip 不对应缺失的公开渲染
 功能。

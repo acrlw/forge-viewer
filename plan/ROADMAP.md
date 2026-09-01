@@ -2,9 +2,9 @@
 
 ## 项目目标
 
-forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环境：
+Mojive 为仿真、机器人和 3D 工具提供统一的查看与调试环境：
 
-- 通过 Forge 渲染 MuJoCo 模型、程序化场景、远程帧和快照
+- 通过 OpenGL 渲染 MuJoCo 模型、程序化场景、远程帧和快照
 - 提供兼容常用 `mujoco.Renderer` 工作流的离屏渲染接口
 - 统一选择、Gizmo、扰动、调试绘制、捕获、CLI 和 RPC
 - 保持渲染与物理后端解耦，支持自定义物理引擎和独立 3D 工具
@@ -18,8 +18,8 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | 范围 | 状态 | 验收结果 |
 |---|---|---|
 | P0 `mujoco.Renderer` 兼容 | 完成 | RGB、米制 depth、segmentation、相机、`MjvOption`、多实例和 200 次生命周期循环通过 |
-| P1 MuJoCo 可视化语义 | 完成 | 严格审计全部为精确对齐或 Forge 等价实现；SDF 标记为 P3 |
-| P1 相机与场景状态 | 完成 | 命名书签、物理状态、选择、可视化选项和 Forge 覆盖值可保存与恢复 |
+| P1 MuJoCo 可视化语义 | 完成 | 严格审计全部为精确对齐或 OpenGL 等价实现；SDF 标记为 P3 |
+| P1 相机与场景状态 | 完成 | 命名书签、物理状态、选择、可视化选项和 OpenGL 覆盖值可保存与恢复 |
 | P1 CLI 与 RPC | 完成 | typed commands、本机 AF_UNIX 服务、版本、超时、错误和三种捕获模式通过 |
 | P1 渲染正确性 | 完成 | `texuniform`、透明排序、100 灯光和 8 个本地阴影槽位通过 |
 | P1 图像门槛 | 完成 | parity、golden、material parity 和完整 GPU 回归通过 |
@@ -31,7 +31,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | 项目 | 结果 |
 |---|---|
 | 核心质量 | Fast 726 passed；Integration 71 passed |
-| Forge GPU 回归 | `make gpu`：265 passed，14 个后端专用测试 skipped |
+| OpenGL GPU 回归 | `make gpu`：265 passed，14 个后端专用测试 skipped |
 | wgpu GPU 回归 | `make gpu-wgpu`：225 passed，7 skipped |
 | MuJoCo physics | 335 passed，977 deselected；严格审计与 conformance 通过 |
 | Renderer API | 每个后端 6 个 CPU 合约；wgpu 11 个真实 GPU 测试；200 次构造销毁 |
@@ -41,7 +41,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | MuJoCo parity | 5 个视角平均 edge IoU 0.247，平均 luma error 17.7，28/29 检查通过 |
 | Golden images | 6/6 通过 |
 | MuJoCo 审计 | 严格模式通过；SDF 记录为延后项 |
-| 官方模型语料 | Downloads 81/81、Projects 77/77；Forge 与 wgpu 均通过 8 视角、segmentation 和动态步进 |
+| 官方模型语料 | Downloads 81/81、Projects 77/77；OpenGL 与 wgpu 均通过 8 视角、segmentation 和动态步进 |
 | 反向回归 | 50/50 mutation gates |
 
 验收产物统一写入 `output/`。
@@ -51,7 +51,7 @@ forge-viewer 为仿真、机器人和 3D 工具提供统一的查看与调试环
 | 里程碑 | 内容 |
 |---|---|
 | M0 项目骨架 | 包结构、Make 入口、测试体系、Viewer 和命令行入口 |
-| M1 Forge 首帧 | 相机、网格上传、不透明渲染、窗口缩放和 present |
+| M1 OpenGL 首帧 | 相机、网格上传、不透明渲染、窗口缩放和 present |
 | M2 材质与纹理 | MuJoCo 材质、纹理、primitive `texuniform` 和透明排序 |
 | M3 Debug Draw | GPU 调试图元、远程桥接、大批量线段和稳定性测试 |
 | M4 选择与诊断 | R32UI picking、抗锯齿 outline、debug views、pass timing 和 Stats UI |
@@ -69,7 +69,7 @@ make renderer-api
 
 ### 公开 API
 
-- 顶层导出 `forge_viewer.Renderer`
+- 顶层导出 `mojive.Renderer`
 - 兼容构造参数、公开属性、context manager 和幂等 `close()`
 - 支持 `update_scene(data, camera=-1, scene_option=None)`
 - 支持 free、fixed、named 和 `MjvCamera` 相机
@@ -182,7 +182,7 @@ P2 按以下顺序执行：
 
 已完成：
 
-- `.forge.json` 的 New、Open、Save、Save As、文件拖放和未保存提示
+- `.mojive.json` 的 New、Open、Save、Save As、文件拖放和未保存提示
 - primitive、light 与 camera 的创建、复制、重命名和删除
 - Entity 菜单、Hierarchy 上下文菜单与快捷键
 - 通用 undo/redo、连续 Gizmo 与 Inspector 编辑事务、保存点脏状态
@@ -191,7 +191,7 @@ P2 按以下顺序执行：
 - MuJoCo `MjSpec` 运行时 MJCF/URDF 添加、移除、命名空间和状态迁移
 - File 菜单、多文件拖放、Hierarchy 模型分组和移除入口
 - OpenGL 与 wgpu 的静态编辑回归
-- Forge 组合文档、文档相对路径、资源目录与缺失资源诊断
+- OpenGL 组合文档、文档相对路径、资源目录与缺失资源诊断
 - 缺失资源交互式重定位和批量路径修复
 - MJCF/URDF 模型根 transform 编辑和文档恢复
 - MjSpec body、geom、joint、site、camera、light 创建、删除、重命名和局部 transform 编辑
@@ -234,7 +234,7 @@ make model-component-authoring BACKEND=wgpu
 make keyframe-authoring BACKEND=wgpu
 make batch-editing BACKEND=wgpu
 make joint-gizmo BACKEND=wgpu
-make scene-entities BACKEND=forge
+make scene-entities BACKEND=opengl
 make scene-entities BACKEND=wgpu
 ```
 

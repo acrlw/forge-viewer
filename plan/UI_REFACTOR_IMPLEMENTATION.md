@@ -1,4 +1,4 @@
-# Forge Viewer UI 交互重构落地方案
+# Mojive UI 交互重构落地方案
 
 状态：M1–M18、D1–D8 已落地并生成验收图；CPU、physics、OpenGL 与 WGPU 回归已通过，等待产品视觉确认
 概念设计来源：`design/index.html` 的 M1–M18 与 D1–D8
@@ -41,7 +41,7 @@
   非模态面板。
 - 运行时 `ui/theme.py` 与设计稿现已统一使用主色 `#9CBF8D / #B8D2AC / #67875A`；轴色、joint 色与
   Inspector badge 继续按各自语义 token 管理，不能退回散落的局部常量。
-- 当前 `ControlPanel` 的 `speed` 是 Forge Viewer 自己已有的控制，不是 playback overlay 的要求。MuJoCo
+- 当前 `ControlPanel` 的 `speed` 是 Mojive 自己已有的控制，不是 playback overlay 的要求。MuJoCo
   3.11 viewer 也存在 `PERCENT_REALTIME` / `real_time_index` slowdown 档位，但本轮产品方案明确不暴露该控件；
   删除 UI 入口时需要同时决定是否保留命令/API 能力，不能用“MuJoCo 有”反推面板必须显示。
 - 当前 Inspector Transform 使用彩色 X/Y/Z reset button 与紧邻的 `drag_float` 复合字段；基础行是
@@ -52,7 +52,7 @@
   保留圆角，内部 seam 填平，不能保留两个相邻控件各自的内侧圆角。
 - 2D transform gizmo 的默认色来自 RGB axis，任意轴或环 hover/active 统一使用色卡 Active
   （Primary Bright `#B8D2AC`）。运行时与可行性页都使用这一目标态；3D solid 形态继续由
-  Forge/WebGPU renderer 验收，不能用 2D draw list 假装 3D。
+  OpenGL/WebGPU renderer 验收，不能用 2D draw list 假装 3D。
 - joint range 目标态使用紫色主轴/圆弧、MIN 蓝 tick、MAX 红 tick、Primary Bright 当前值 tick，以及带
   底板和语义色点的白字标签。Hinge 不绘制方向箭头；slide 只保留一支与 transform gizmo 相同轮廓的
   轴外箭头，且只有该箭头可 hover / press / drag，范围线、当前 tick 与 MIN/MAX 标签均为只读语境。
@@ -99,7 +99,7 @@ framebuffer 像素网格，避免 HiDPI 下发虚。
 
 ### 3.4 SVG 的使用边界
 
-结论：**SVG 适合作为图标的设计源文件，但不作为 Forge Viewer 的运行时绘制格式。**
+结论：**SVG 适合作为图标的设计源文件，但不作为 Mojive 的运行时绘制格式。**
 
 Dear ImGui 负责提交 draw list 或已经上传的纹理，不负责解析 SVG、曲线细分、光栅化和 GPU 上传。
 当前项目也没有 SVG 解析器；若运行时直接加载 SVG，需要同时增加解析 / tessellation、缓存失效、
@@ -326,8 +326,8 @@ translated_title + "###Settings"
 ### 建议方案
 
 1. 在 `settings_path()` 附近提取共用的 `config_dir()`。
-2. 运行时布局保存到 `<config-dir>/forge-viewer/layout.ini`。
-3. 支持 `FORGE_VIEWER_IMGUI_INI` 环境变量，供测试和明确覆盖使用。
+2. 运行时布局保存到 `<config-dir>/mojive/layout.ini`。
+3. 支持 `MOJIVE_IMGUI_INI` 环境变量，供测试和明确覆盖使用。
 4. headless 和普通 GPU 测试默认继续使用空 ini path；只有布局持久化测试传入临时文件。
 5. 默认布局不保存成仓库内的 ini blob，而是在 Python 中声明：
    - layout schema version；

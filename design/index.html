@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>forge-viewer UI 设计审阅与概念设计</title>
+<title>Mojive UI 设计审阅与概念设计</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -38,7 +38,7 @@
 </svg>
 
 <nav id="nav">
-  <div class="nav-title">forge-viewer<br><small>UI 设计审阅与概念设计</small></div>
+  <div class="nav-title">mojive<br><small>UI 设计审阅与概念设计</small></div>
   <a href="#cover">0 · 封面</a>
   <a href="#screens">1 · 现状切片</a>
   <a href="#interactions">2 · 交互地图</a>
@@ -55,8 +55,8 @@
 
 <!-- ================= 0. 封面 ================= -->
 <section id="cover">
-  <h1>forge-viewer UI 设计审阅与概念设计</h1>
-  <p class="lead">本文档基于基线运行截图与当前源码（<code>src/forge_viewer/ui/</code> 目录）制作，包含现状切片、交互地图、动线分析、问题清单、设计规范、概念设计提案与详细设计原型（<a href="#detail">§7</a>，全窗口高保真）。截图保留采集时的本地化状态，仅作为历史证据；功能清单与设计判断以 2026-08-29 的工作区源码为准。本文档含设计规范章节（<a href="#spec">§5</a>），所有 mockup 的图标 / 色值 / 圆角 / 快捷键标注以 §5 为准。</p>
+  <h1>Mojive UI 设计审阅与概念设计</h1>
+  <p class="lead">本文档基于基线运行截图与当前源码（<code>src/mojive/ui/</code> 目录）制作，包含现状切片、交互地图、动线分析、问题清单、设计规范、概念设计提案与详细设计原型（<a href="#detail">§7</a>，全窗口高保真）。截图保留采集时的本地化状态，仅作为历史证据；功能清单与设计判断以 2026-08-29 的工作区源码为准。本文档含设计规范章节（<a href="#spec">§5</a>），所有 mockup 的图标 / 色值 / 圆角 / 快捷键标注以 §5 为准。</p>
   <p class="meta-line">日期：2026-08-29 ｜ 对象版本：工作区当前源码 ｜ 截图复现：<code>design/tools/capture_states.py</code></p>
 
   <div class="cover-card">
@@ -487,7 +487,7 @@
       <span class="step-arrow">→</span>
       <div class="step bad"><span class="step-n">2</span><div><b>找 GUI 入口</b><small>无任何入口</small></div></div>
       <span class="step-arrow">→</span>
-      <div class="step bad"><span class="step-n">3</span><div><b>退回 CLI</b><small><code>forge capture</code> / <code>forge record</code></small></div></div>
+      <div class="step bad"><span class="step-n">3</span><div><b>退回 CLI</b><small><code>opengl capture</code> / <code>opengl record</code></small></div></div>
     </div>
     <ul>
       <li>相机面板的剪贴板 / 书签只覆盖相机姿态，不产出图像（<a href="#issues">P1-2</a>）。</li>
@@ -502,7 +502,7 @@
     <thead><tr><th>编号</th><th>严重度</th><th>问题</th><th style="width:34%">证据（截图 / 代码位置）</th></tr></thead>
     <tbody>
       <tr><td class="issue-id">P1-1</td><td><span class="sev p1">P1 摩擦</span></td><td>Window 菜单已可恢复面板，但缺少 Reset Layout；布局节点损坏后没有安全回到默认布局的入口</td><td><code>app.py:1132-1144</code>；<code>window.py:444-470</code></td></tr>
-      <tr><td class="issue-id">P1-2</td><td><span class="sev p1">P1 摩擦</span></td><td>截图 / 录制仅 CLI，GUI 无入口</td><td><code>src/forge_viewer/cli.py</code>；相机面板仅有剪贴板/书签</td></tr>
+      <tr><td class="issue-id">P1-2</td><td><span class="sev p1">P1 摩擦</span></td><td>截图 / 录制仅 CLI，GUI 无入口</td><td><code>src/mojive/cli.py</code>；相机面板仅有剪贴板/书签</td></tr>
       <tr><td class="issue-id">P1-3</td><td><span class="sev p1">P1 摩擦</span></td><td>高级手势零可供性；Help 已可从 Window 打开，但操作现场没有情境提示</td><td><code>panels/help.py</code>；<code>ui/panels/__init__.py:357+</code></td></tr>
       <tr><td class="issue-id">P1-4</td><td><span class="sev p1">P1 摩擦</span></td><td>检查器 3100 行超长单栏，多 geom 材质平铺</td><td><code>state-selected-gizmo.png</code>；<code>ui/panels/inspector.py</code></td></tr>
       <tr><td class="issue-id">P1-5</td><td><span class="sev p1">P1 摩擦</span></td><td>运行态门控分散、文案不一：哪些控件运行中可用没有一致规则与状态提示</td><td><code>state-running.png</code>；<code>inspector.py</code> 十余处警告文案</td></tr>
@@ -533,8 +533,8 @@
 <!-- ================= 5. 设计规范 ================= -->
 <section id="spec">
   <h2>5 · 设计规范 <span class="h2-sub">所有 mockup 的图标 / 色值 / 圆角 / 快捷键标注以本节为准</span></h2>
-  <p>全部数值取自源码：<code>src/forge_viewer/ui/theme.py</code>、<code>src/forge_viewer/ui/app.py:2318-2456</code>（播放控件）、<code>src/forge_viewer/ui/fonts.py</code> 与 <code>window.py:162</code>（字体）。本文档中的 px 对应实现中的 pt @ <code>ui_scale = 1</code>。</p>
-  <p style="border:1px solid var(--border);border-left:3px solid var(--primary-dim);background:var(--bg-child);padding:8px 12px;max-width:960px"><b>线框风格约定（桌面应用风格）</b>：forge-viewer 是桌面软件，本文档所有 mockup 一律按桌面应用绘制——<b>flat 填色、1px Border <code>#3A3F45</code> 描边、无阴影（浮动窗 / 弹出菜单 / popover 除外）、无渐变、圆角仅 §5.3 两级</b>（3px 面板 / 999px 胶囊 overlay）。禁止前端化手法：卡片投影、渐变铺色、大于 3px 的面板圆角、装饰性透明叠层。</p>
+  <p>全部数值取自源码：<code>src/mojive/ui/theme.py</code>、<code>src/mojive/ui/app.py:2318-2456</code>（播放控件）、<code>src/mojive/ui/fonts.py</code> 与 <code>window.py:162</code>（字体）。本文档中的 px 对应实现中的 pt @ <code>ui_scale = 1</code>。</p>
+  <p style="border:1px solid var(--border);border-left:3px solid var(--primary-dim);background:var(--bg-child);padding:8px 12px;max-width:960px"><b>线框风格约定（桌面应用风格）</b>：mojive 是桌面软件，本文档所有 mockup 一律按桌面应用绘制——<b>flat 填色、1px Border <code>#3A3F45</code> 描边、无阴影（浮动窗 / 弹出菜单 / popover 除外）、无渐变、圆角仅 §5.3 两级</b>（3px 面板 / 999px 胶囊 overlay）。禁止前端化手法：卡片投影、渐变铺色、大于 3px 的面板圆角、装饰性透明叠层。</p>
 
   <h3>5.1 色卡</h3>
   <p style="border:1px solid var(--border);border-left:3px solid var(--primary-dim);background:var(--bg-child);padding:8px 12px;max-width:960px"><b>2026-08-29 修订</b>：整体继续使用低饱和莫兰迪基调，但空间编辑色属于功能例外——X / Y / Z 必须在 2–4px 细线与复杂场景中瞬间可辨，因此使用较亮的 Axis 色；Inspector 的 X / Y / Z 是白字小徽章，改用同色相的深色 Field surface，不能直接拿亮 Axis 色铺底。Joint 使用偏暖、低饱和紫，与蓝轴拉开色相。Primary 只负责 UI interaction，不与 Y 轴共用；落地时需同步 <code>theme.py</code> 与 <code>gizmo.py</code>。</p>
@@ -1074,7 +1074,7 @@
             <div class="wf-tabs"><span>Stats</span><span>Output</span><span class="on wf-hl">Settings</span></div>
             <div style="flex:1;display:flex;min-height:0">
               <div style="flex:none;width:32%;border-right:1px solid var(--border);padding:3px 6px;color:var(--text-disabled)"><div>General</div><div>Interaction</div><div>Rendering</div><div>MuJoCo Visuals</div></div>
-              <div style="flex:1;padding:3px 6px;color:var(--text-disabled)"><div>mjtRndFlag</div><div>mjtVisFlag</div><div>Forge render flags</div></div>
+              <div style="flex:1;padding:3px 6px;color:var(--text-disabled)"><div>mjtRndFlag</div><div>mjtVisFlag</div><div>OpenGL render flags</div></div>
             </div>
           </div>
         </div>
@@ -1388,14 +1388,14 @@
             <div class="pr"><span class="l">Debug view</span><span class="fld cmb"><span>shaded</span><span>▾</span></span></div>
             <div class="pr"><span class="l">Labels</span><span class="fld cmb"><span>none</span><span>▾</span></span></div>
             <div class="pr"><span class="l">Frames</span><span class="fld cmb"><span>none</span><span>▾</span></span></div>
-            <div class="pr-grp">Forge render flags</div>
+            <div class="pr-grp">OpenGL render flags</div>
             <div class="pr"><span class="l fl">outline</span><span class="ck"><i class="im-check on"></i></span></div>
             <div class="pr"><span class="l fl">tonemap</span><span class="ck"><i class="im-check on"></i></span></div>
             <div class="pr"><span class="l fl">msaa</span><span class="ck"><i class="im-check on"></i></span></div>
           </div>
         </div>
         <ul>
-          <li>渲染页全部内容列全（<code>settings.py:157-178</code> _rendering）：forge 渲染开关组 = outline / tonemap / msaa 三项（<code>backend.py:61-63</code>）——checkbox 行去双 label：label 列 = flag 名（等宽），widget 列只有单个 checkbox；<b>flag 专有名词不硬塞中文</b>，说明一律由 tooltip 承载（行内不放说明小字）。</li>
+          <li>渲染页全部内容列全（<code>settings.py:157-178</code> _rendering）：opengl 渲染开关组 = outline / tonemap / msaa 三项（<code>backend.py:61-63</code>）——checkbox 行去双 label：label 列 = flag 名（等宽），widget 列只有单个 checkbox；<b>flag 专有名词不硬塞中文</b>，说明一律由 tooltip 承载（行内不放说明小字）。</li>
           <li>Debug view / Labels / Frames 画<b>闭合 combo</b>（框内当前值 + 右侧 ▾），可选值列表不在线框展开：Debug view 8 项 = shaded / albedo / normal / depth / segment / idcolor / overdraw / wireframe；Labels 14 项 = none / body / joint / geom / site / camera / light / tendon / actuator / constraint / flex / contact point / contact force / selection；Frames 8 项 = none / body / geom / site / camera / light / contact / world（枚举全量，<code>backend.py:65-110</code>）；三项收进「调试」折叠组，默认折叠。</li>
           <li>backend / device 与后端 notes（scene lights / shadow casters）为只读信息，移至页脚。</li>
         </ul>
@@ -1580,7 +1580,7 @@
       <div class="mockup-notes">
         <h4>改动点</h4>
         <ul>
-          <li><b>删除 <code>speed</code></b>：MuJoCo 3.11 viewer 确实存在 realtime slowdown 档位，但 Forge Viewer 本轮产品 UI 不暴露仿真速率；Playback 与 Control 都不放该控件。</li>
+          <li><b>删除 <code>speed</code></b>：MuJoCo 3.11 viewer 确实存在 realtime slowdown 档位，但 Mojive 本轮产品 UI 不暴露仿真速率；Playback 与 Control 都不放该控件。</li>
           <li><b><code>actuators</code> 从 Joints 移到 Control</b>：Control 统一承担运行输入与仿真开关，包括 actuator ctrl 和 equality constraint；Joints 只查看与控制 joint position。</li>
           <li>当前源码已经没有 keyframe 滑条；状态 KV（sim time / steps / state / timestep）与 last message 仍应从 Control 移到状态栏 / Stats / Output。M15 直接优化现有 Keyframes 工作区。</li>
           <li>标题只显示 <code>Control</code>，不添加解释小字；子组标题使用 <code>actuators</code> 与更短的 <code>equality</code>。equality 行用无可见表头的 ImGui property table 排成左 label / 右 checkbox 两列。</li>
@@ -1877,7 +1877,7 @@
           <div class="tree"><div class="tr dim"><span class="tw"></span>Empty Scene</div></div>
         </div>
         <div class="wf-viewport">
-          <span class="wf-vp-label" style="border-style:solid;padding:10px 18px;line-height:1.8;text-align:center;color:var(--text)">Drop a .forge.json scene here<br><span style="color:var(--text-disabled)">File &gt; Open Scene... · Entity &gt; Create</span></span>
+          <span class="wf-vp-label" style="border-style:solid;padding:10px 18px;line-height:1.8;text-align:center;color:var(--text)">Drop a .mojive.json scene here<br><span style="color:var(--text-disabled)">File &gt; Open Scene... · Entity &gt; Create</span></span>
         </div>
         <div class="wf-col right" style="width:30%">
           <div class="wf-tabs"><span class="on">Control</span><span>Joints</span><span>Camera</span></div>

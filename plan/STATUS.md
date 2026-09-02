@@ -58,6 +58,18 @@ include、注释或格式时，继续编辑原始外部文件。
 官方 Python binding；适合先做独立 C-ABI spike，不适合现在承诺为生产适配器。Newton 保留为候选，
 选择前统一比较 binding 所有权、模型输入、调试数据、平台和 API 稳定性。
 
+### RL 批量感知渲染
+
+当前 `Renderer` 可以用 `render_async()` 正确地流水执行少量 camera/state，但仍然是单 scene、单
+camera、单 render target 的逐 view 路径；`create_peer()` 也只共享 graphics device/context，并不共享
+mesh、texture 和 pass resources。它能满足相机预览、小规模多相机 capture 和 CPU dataset 生成，不能
+作为几十至几百个 vectorized world 的高吞吐 RL sensor。
+
+下一阶段先建立 shared immutable render resources 和 flat selected-view batch，再实现 texture-array
+输出、一次 encoder/submission 和整批 readback。多 world topology cohort 与真实 GPU tensor interop
+在这个所有权边界之后推进。设计与 Newton `SensorTiledCamera` 的实现对照见
+[`docs/BATCH_RENDERING.md`](../docs/BATCH_RENDERING.md)。
+
 ### 平台与发布
 
 - Windows D3D12 wgpu 的安装、窗口和视觉回归仍需真实机器验证；
@@ -69,7 +81,7 @@ include、注释或格式时，继续编辑原始外部文件。
 `.fvs` 和 live snapshot transport 使用 pickle，只适合可信本机或可信局域网。接收不可信网络数据
 前必须迁移到非可执行 schema；固定 auth key 不能把 pickle 变成安全边界。
 
-### 规模触发项
+### 其他规模触发项
 
 大型 mesh BVH 诊断、全量 instance buffer 上传、frustum culling/LOD/indirect draw 和大量 point-light
 shadow face 重绘目前没有达到必须重构的实测门槛。由真实 profile 或 parity drift 触发优化，不为了

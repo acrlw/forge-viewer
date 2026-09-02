@@ -67,7 +67,21 @@ authoring visual target。
 验收：clean-environment install script、`mojive assets --quick`、`mojive doctor test_scene`、
 一张 deterministic capture 和严格文档构建。
 
-## R3：第二个真实物理适配器
+## R3：RL 批量感知渲染
+
+当前单 view `Renderer` 保留为兼容和交互路径。批量路径按以下所有权顺序推进：
+
+1. 把 mesh、texture、material、sampler 和 pipeline 拆为 peer 可共享的 immutable resources；
+2. 以 flat selected views 表达 camera-to-world 映射，不强制 dense world × camera 组合；
+3. 用 texture arrays、per-view frame offsets 和一个 encoder/submission 完成同 topology 多相机渲染；
+4. 用 batched pose upload 和 per-world bucket ranges 扩展到 replicated topology cohorts；
+5. 仅在后端存在真实同步与所有权桥接时提供 device-resident tensor result。
+
+验收必须包含 serial reference 像素一致性，以及 1/4/16/64/256 views 在 128²/256² 的 batch latency、
+views/s、pixels/s、CPU/GPU time、upload bytes、submission count 和内存。完整设计见
+[`docs/BATCH_RENDERING.md`](../docs/BATCH_RENDERING.md)。
+
+## R4：第二个真实物理适配器
 
 ToyPhysics 继续作为协议示例。生产适配器按以下顺序推进：
 
@@ -87,7 +101,7 @@ make adapter-conformance ADAPTER=<backend> CONFORMANCE_ASSET=<asset>
 
 并为真实模型增加独立 visual target。
 
-## R4：远程与格式边界
+## R5：远程与格式边界
 
 当前 live view 和 `.fvs` 只支持可信环境。若产品需求扩展到非可信网络：
 
@@ -98,7 +112,7 @@ make adapter-conformance ADAPTER=<backend> CONFORMANCE_ASSET=<asset>
 
 在此之前不把固定 auth key 描述成安全 transport。
 
-## R5：由测量触发的图形工作
+## R6：由测量触发的图形工作
 
 以下项目不设虚假日期，由 profile、模型语料或 parity regression 触发：
 

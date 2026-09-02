@@ -537,7 +537,7 @@
   <p style="border:1px solid var(--border);border-left:3px solid var(--primary-dim);background:var(--bg-child);padding:8px 12px;max-width:960px"><b>线框风格约定（桌面应用风格）</b>：mojive 是桌面软件，本文档所有 mockup 一律按桌面应用绘制——<b>flat 填色、1px Border <code>#3A3F45</code> 描边、无阴影（浮动窗 / 弹出菜单 / popover 除外）、无渐变、圆角仅 §5.3 两级</b>（3px 面板 / 999px 胶囊 overlay）。禁止前端化手法：卡片投影、渐变铺色、大于 3px 的面板圆角、装饰性透明叠层。</p>
 
   <h3>5.1 色卡</h3>
-  <p style="border:1px solid var(--border);border-left:3px solid var(--primary-dim);background:var(--bg-child);padding:8px 12px;max-width:960px"><b>2026-08-29 修订</b>：整体继续使用低饱和莫兰迪基调，但空间编辑色属于功能例外——X / Y / Z 必须在 2–4px 细线与复杂场景中瞬间可辨，因此使用较亮的 Axis 色；Inspector 的 X / Y / Z 是白字小徽章，改用同色相的深色 Field surface，不能直接拿亮 Axis 色铺底。Joint 使用偏暖、低饱和紫，与蓝轴拉开色相。Primary 只负责 UI interaction，不与 Y 轴共用；落地时需同步 <code>theme.py</code> 与 <code>gizmo.py</code>。</p>
+  <p style="border:1px solid var(--border);border-left:3px solid var(--primary-dim);background:var(--bg-child);padding:8px 12px;max-width:960px"><b>2026-09-02 修订</b>：整体继续使用低饱和莫兰迪基调，但空间编辑色属于功能例外——X / Y / Z 必须在 2–4px 细线与复杂场景中瞬间可辨，因此使用较亮的 Axis 色；Inspector 的 X / Y / Z 是白字小徽章，改用同色相的深色 Field surface，不能直接拿亮 Axis 色铺底。Joint gizmo 默认复用 Primary / Primary Bright / Primary Dim，提高复杂场景中的辨识度；原偏暖低饱和紫保留为备用强调色，不再承担 Joint gizmo 语义。</p>
   <div class="swgrid">
     <div class="sw"><span class="swc" style="background:#9CBF8D"></span><div><b>Primary</b><code>#9CBF8D</code><small>强调 / 选中态 / 热点与新增标记</small></div></div>
     <div class="sw"><span class="swc" style="background:#B8D2AC"></span><div><b>Primary Bright</b><code>#B8D2AC</code><small>悬停高亮 / 勾选标记（check_mark）</small></div></div>
@@ -561,7 +561,9 @@
     <div class="sw"><span class="swc" style="background:#A84E4B"></span><div><b>Axis Field X</b><code>#A84E4B</code><small>Inspector X 徽章底；白字对比度 5.45:1</small></div></div>
     <div class="sw"><span class="swc" style="background:#317A3A"></span><div><b>Axis Field Y</b><code>#317A3A</code><small>Inspector Y 徽章底；白字对比度 5.28:1</small></div></div>
     <div class="sw"><span class="swc" style="background:#4868AD"></span><div><b>Axis Field Z</b><code>#4868AD</code><small>Inspector Z 徽章底；白字对比度 5.44:1</small></div></div>
-    <div class="sw"><span class="swc" style="background:#AF84B7"></span><div><b>Joint</b><code>#AF84B7</code><small>joint gizmo 默认轴线 / 圆弧；偏暖低饱和紫</small></div></div>
+    <div class="sw"><span class="swc" style="background:#AD96B8"></span><div><b>Reserved Purple</b><code>#AD96B8</code><small>备用强调色；不用于默认 joint gizmo</small></div></div>
+    <div class="sw"><span class="swc" style="background:#C7B4CF"></span><div><b>Reserved Purple Bright</b><code>#C7B4CF</code><small>备用紫色 hover / 高亮</small></div></div>
+    <div class="sw"><span class="swc" style="background:#8D7898"></span><div><b>Reserved Purple Dim</b><code>#8D7898</code><small>备用紫色 pressed / 暗部</small></div></div>
   </div>
   <p class="legend">节点类型色仍保留为 <code>theme.py:101-116</code> 的语义 token，但不用于 Hierarchy 树行：树行名称统一白色，类型只由右侧固定列显示，避免颜色圆点与 type 文本重复编码。现有 token：<span style="color:#425167">●</span> world <code>#425167</code>　<span style="color:#9A96C6">●</span> link <code>#9A96C6</code>　<span style="color:#AC7D65">●</span> geom <code>#AC7D65</code>　<span style="color:#C5DED4">●</span> robot <code>#C5DED4</code>　<span style="color:#7B5483">●</span> joint <code>#7B5483</code>　<span style="color:#A2617C">●</span> site <code>#A2617C</code>　<span style="color:#8AB7C0">●</span> camera <code>#8AB7C0</code>　<span style="color:#CAC698">●</span> light <code>#CAC698</code></p>
 
@@ -686,7 +688,7 @@
     <thead><tr><th>元素</th><th>位置</th><th>样式要点</th><th>规格 / 方案</th></tr></thead>
     <tbody>
       <tr><td>变换 gizmo</td><td>视口选中对象</td><td>默认轴色 XYZ；任意轴或环 hover / active 统一使用色卡 Active（Primary Bright <code>#B8D2AC</code>），不按原轴色分别增亮；screen ring 默认中性灰。2D / 3D 只改变几何表达，形态切换只放在 Settings</td><td>§5.1，M8-A</td></tr>
-      <tr><td>关节 gizmo</td><td>视口选中关节</td><td>弧 / 轴线 + 端点 tick + 当前值 tick + 端点标签；不再绘制方向箭头。主轴 / 圆弧保持紫色，当前值使用 Primary Bright；MIN tick = Z 蓝，MAX tick = X 红；双击轴线 / 圆弧打开 Type value</td><td>§5.7，M8-B</td></tr>
+      <tr><td>关节 gizmo</td><td>视口选中关节</td><td>弧 / 轴线 + 端点 tick + 当前值 tick；主轴 / 圆弧与当前值使用 Primary，交互态使用 Primary Bright / Dim；MIN tick = Z 蓝，MAX tick = X 红；hover 端点约 0.5 秒后显示只读数值标签，点击端点 tick 设置限值；双击轴线 / 圆弧打开 Type value</td><td>§5.7，M8-B</td></tr>
       <tr><td>场景 helper 图标点</td><td>灯 / 相机实体位置</td><td>12px SVG 图标点（灯 / 相机各一图标）；默认只显示图标，选中联动显示 influence volume</td><td>M8-C</td></tr>
       <tr><td>influence volume 线框</td><td>选中灯 / 相机</td><td>未选中 Text Disabled 45% alpha / 选中 Primary Bright / hover 增亮；相机 frustum hint 同规则</td><td>M8-C</td></tr>
       <tr><td>选中对象名</td><td>持久 Status</td><td>不在视口重复渲染；Status 左侧显示当前选择，无选择时显示 <code>no selection</code></td><td>M4 / M7</td></tr>
@@ -1263,12 +1265,12 @@
     <div class="mockup-notes">
       <ul>
         <li>端点标签<b>底板化</b>（§5.7）：深色半透明底板 + 3px 圆角 + 12px 等宽；<b>无引线</b>——标签直接置于端点刻度旁、上下偏移<b>避让</b>轴线 / 圆弧本体，不再被几何或自身图形穿透（现状反例见 1.11 / 1.12，P1-14）。</li>
-        <li><b>端点画语义色刻度线（tick）</b>：滑动轴 MIN / MAX 为垂直于轴线的 8px × 2px 短刻度；角度环端点使用更易辨认的 16px × 2.4px 径向刻度。MIN tick 使用 Z 蓝 <code>#6F94E5</code>，MAX tick 使用 X 红 <code>#DC7773</code>，与相邻标签色点一一对应；主轴 / 圆弧使用 Joint <code>#AF84B7</code>。</li>
-        <li><b>当前位置不再使用箭头</b>：slide 在物体中心、hinge 在当前角度分别绘制垂直 / 径向的 Primary Bright <code>#B8D2AC</code> 高亮刻度（20px × 4px）。这样方向由轴线 / 圆弧本身表达，当前位置只由一种形状表达，不再让箭头同时承担两种语义。</li>
+        <li><b>端点画语义色刻度线（tick）</b>：滑动轴 MIN / MAX 为垂直于轴线的短刻度；角度环端点使用更易辨认的径向刻度。MIN tick 使用 Z 蓝 <code>#6F94E5</code>，MAX tick 使用 X 红 <code>#DC7773</code>；主轴 / 圆弧使用 Primary <code>#9CBF8D</code>。</li>
+        <li><b>当前位置不再使用箭头</b>：slide 在物体中心、hinge 在当前角度分别绘制垂直 / 径向的 Primary 刻度。当前位置到达 MIN / MAX 时不变色，端点刻度最后绘制并保持在当前值刻度上方。</li>
         <li><b>双击轴线或圆弧 = Type value</b>：命中区围绕可见轨道扩展 10–12px；slide 打开标题为关节名、固定单位 <code>m</code> 的输入 popover，hinge 复用角度 / 弧度单位逻辑。Enter 提交并关闭，Esc 取消；这些自然操作不在 popover 内重复写说明。</li>
         <li><b>hinge 拖动反馈与 transform rotation 共用色卡</b>：原橙色 sweep sector 改为 Primary Dim <code>#67875A</code> 24% 淡填充，活动弧与当前 / 命中 snap tick 使用 Primary Bright <code>#B8D2AC</code>；Shift 展开的普通刻度使用 Text Disabled。两类 rotation gizmo 不再保留黄色 / 橙色交互层。</li>
-        <li><b>MIN / MAX 标签 = 按钮（新增交互）</b>：现状限值标签是纯文本 <code>overlay.text</code>、无点击处理（<code>gizmo.py:1151-1160, 1248-1253</code>）。default = §5.7 底板样式；<b>hover</b> = 底 BG Frame Hovered <code>#363B41</code> + 文字 Primary Bright <code>#B8D2AC</code> + cursor pointer（上图 MAX +0.340 m 示 hover 态）；<b>press</b> = 底 BG Frame Active <code>#40464D</code>；<b>点击 = 将该关节 qpos 设为对应限值</b>（新增命令）；tooltip = <code>Set minimum</code> / <code>Set maximum</code>。拖动中的实时数值标签保留，但当前位置始终由 Primary Bright tick 表达。</li>
-        <li><b>本轮不做 gizmo 外描边</b>：joint gizmo 保留干净的单层紫色轮廓；白色 halo 仅作为后续真实复杂场景的对比度实验，不进入当前接受稿。</li>
+        <li><b>MIN / MAX tick = 按钮</b>：端点 tick hover / press 使用对应轴色交互态；hover 约 0.5 秒后显示只读数值标签，短暂移出具有防闪烁缓冲；点击 tick 将该 joint position 设为对应限值。数值标签本身没有 hover / press 色，也不可点击。</li>
+        <li><b>本轮不做 gizmo 外描边</b>：joint gizmo 保留干净的单层 Primary 轮廓；白色 halo 仅作为后续真实复杂场景的对比度实验。</li>
         <li><b>语义色限制在端点</b>：MIN / MAX 的红蓝只出现在端点 tick 与底板内 6px 色点（MIN=Z 蓝、MAX=X 红）；文字本体 Text 白色，单位灰色小字。主轴 / 圆弧不改色，避免整条 gizmo 与 ViewCube / 变换轴混淆（P2-15）。</li>
         <li>标签屏幕空间正向、最上层绘制，任何场景内容上可读。</li>
         <li>拖动中端点标签内实时显示当前值（现状行为保留）。</li>
@@ -2377,7 +2379,7 @@
       <h4>场景脚本</h4>
       <ul>
         <li>第 5 步：加载 <code>joint_types.xml</code>，层级树选中 hinge_body（行高亮），拖动视口关节角度环摆姿态；播放胶囊为暂停态（step 可单步验证）。</li>
-        <li>MIN / MAX 端点标签按 M8-B 新规范：底板 + 色点（MIN=Z 蓝 / MAX=X 红），端点 tick 同步使用蓝 / 红，主圆弧保持紫色且不加 halo；标签直接置于刻度旁、避让环体、<b>无引线</b>。标签为按钮——<b>点击将该 joint position 设为对应限值</b>（tooltip <code>Set minimum</code> / <code>Set maximum</code>）。Joints 面板不再出现 Pose / Actuator tab，只显示源码 <code>joints</code> 分组；actuator input 已迁移到 Control。底部 Plot 面板保留 joint position 轨迹。</li>
+        <li>MIN / MAX 端点 tick 使用蓝 / 红，主圆弧使用 Primary 且不加 halo；hover tick 约 0.5 秒后显示只读数值标签，点击 tick 将该 joint position 设为对应限值。Joints 面板不再出现 Pose / Actuator tab，只显示源码 <code>joints</code> 分组；actuator input 已迁移到 Control。底部 Plot 面板保留 joint position 轨迹。</li>
       </ul>
       <p class="legend">涉及规格：M8-B 关节 gizmo 标签；M11 Control；M12 Joints；§5.7 标签；§5.9 交互态。</p>
     </div>
